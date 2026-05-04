@@ -1,0 +1,111 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.functions.SMO -C 1.0 -L 0.001 -P 1.0E-12 -N 0 -V -1 -W 1 -K "weka.classifiers.functions.supportVector.PolyKernel -E 1.0 -C 250007" -calibrator "weka.classifiers.functions.Logistic -R 1.0E-8 -M -1 -num-decimal-places 4"
+Relation:     h8_027.min
+Instances:    24739
+Attributes:   29
+              A001
+              A002
+              A003
+              A004
+              A005
+              A006
+              A007
+              A008
+              A009
+              A010
+              A011
+              A012
+              A013
+              A014
+              A015
+              A016
+              A017
+              A018
+              A019
+              A020
+              A021
+              A022
+              A023
+              A024
+              A025
+              A026
+              A027
+              A028
+              class
+Test mode:    10-fold cross-validation
+
+=== Classifier model (full training set) ===
+
+SMO
+
+Kernel used:
+  Linear Kernel: K(x,y) = <x,y>
+
+Classifier for classes: 0, 1
+
+BinarySMO
+
+Machine linear: showing attribute weights, not support vectors.
+
+        -0.0003 * (normalized) A001
+ +      -0      * (normalized) A002
+ +       0.0001 * (normalized) A003
+ +      -0.0002 * (normalized) A004
+ +      -0.0001 * (normalized) A005
+ +       0      * (normalized) A006
+ +      -0.0002 * (normalized) A007
+ +      -0.0002 * (normalized) A008
+ +      -0.0002 * (normalized) A009
+ +      -0.0002 * (normalized) A010
+ +      -0.0001 * (normalized) A011
+ +      -0.0001 * (normalized) A012
+ +      -0.0003 * (normalized) A013
+ +       0      * (normalized) A014
+ +      -0      * (normalized) A015
+ +       0      * (normalized) A016
+ +      -0.0001 * (normalized) A017
+ +      -0      * (normalized) A018
+ +      -0.0002 * (normalized) A019
+ +      -0.0002 * (normalized) A020
+ +      -0      * (normalized) A021
+ +      -0      * (normalized) A022
+ +      -0.0002 * (normalized) A023
+ +      -0.0002 * (normalized) A024
+ +      -0      * (normalized) A025
+ +      -0.0001 * (normalized) A026
+ +       0.0001 * (normalized) A027
+ +      -0.0002 * (normalized) A028
+ -       0.9979
+
+Number of kernel evaluations: 227061496 (11.361% cached)
+
+
+
+Time taken to build model: 89.7 seconds
+
+=== Stratified cross-validation ===
+=== Summary ===
+
+Correctly Classified Instances       23949               96.8067 %
+Incorrectly Classified Instances       790                3.1933 %
+Kappa statistic                          0     
+Mean absolute error                      0.0319
+Root mean squared error                  0.1787
+Relative absolute error                 51.6165 %
+Root relative squared error            101.636  %
+Total Number of Instances            24739     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 1.000    1.000    0.968      1.000    0.984      ?        0.500     0.968     0
+                 0.000    0.000    ?          0.000    ?          ?        0.500     0.032     1
+Weighted Avg.    0.968    0.968    ?          0.968    ?          ?        0.500     0.938     
+
+=== Confusion Matrix ===
+
+     a     b   <-- classified as
+ 23949     0 |     a = 0
+   790     0 |     b = 1
+

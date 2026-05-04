@@ -1,0 +1,72 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.trees.RandomForest -P 100 -I 100 -num-slots 1 -K 0 -M 1.0 -V 0.001 -S 1
+Relation:     h8_019.min
+Instances:    24699
+Attributes:   29
+              A001
+              A002
+              A003
+              A004
+              A005
+              A006
+              A007
+              A008
+              A009
+              A010
+              A011
+              A012
+              A013
+              A014
+              A015
+              A016
+              A017
+              A018
+              A019
+              A020
+              A021
+              A022
+              A023
+              A024
+              A025
+              A026
+              A027
+              A028
+              class
+Test mode:    10-fold cross-validation
+
+=== Classifier model (full training set) ===
+
+RandomForest
+
+Bagging with 100 iterations and base learner
+
+weka.classifiers.trees.RandomTree -K 0 -M 1.0 -V 0.001 -S 1 -do-not-check-capabilities
+
+Time taken to build model: 6.13 seconds
+
+=== Stratified cross-validation ===
+=== Summary ===
+
+Correctly Classified Instances       23877               96.6719 %
+Incorrectly Classified Instances       822                3.3281 %
+Kappa statistic                          0.0185
+Mean absolute error                      0.0681
+Root mean squared error                  0.1861
+Relative absolute error                104.8552 %
+Root relative squared error            103.2565 %
+Total Number of Instances            24699     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 1.000    0.990    0.967      1.000    0.983      0.097    0.538     0.970     0
+                 0.010    0.000    1.000      0.010    0.019      0.097    0.538     0.050     1
+Weighted Avg.    0.967    0.957    0.968      0.967    0.951      0.097    0.538     0.939     
+
+=== Confusion Matrix ===
+
+     a     b   <-- classified as
+ 23869     0 |     a = 0
+   822     8 |     b = 1
+

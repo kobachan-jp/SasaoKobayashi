@@ -1,0 +1,242 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.bayes.NaiveBayes 
+Relation:     h8_021.min
+Instances:    24688
+Attributes:   29
+              A001
+              A002
+              A003
+              A004
+              A005
+              A006
+              A007
+              A008
+              A009
+              A010
+              A011
+              A012
+              A013
+              A014
+              A015
+              A016
+              A017
+              A018
+              A019
+              A020
+              A021
+              A022
+              A023
+              A024
+              A025
+              A026
+              A027
+              A028
+              class
+Test mode:    10-fold cross-validation
+
+=== Classifier model (full training set) ===
+
+Naive Bayes Classifier
+
+                Class
+Attribute           0      1
+               (0.97) (0.03)
+=============================
+A001
+  mean          1.8261  1.806
+  std. dev.      0.379 0.3954
+  weight sum     23858    830
+  precision          1      1
+
+A002
+  mean          1.8186 1.8217
+  std. dev.     0.3854 0.3828
+  weight sum     23858    830
+  precision          1      1
+
+A003
+  mean          1.8167 1.8084
+  std. dev.     0.3869 0.3935
+  weight sum     23858    830
+  precision          1      1
+
+A004
+  mean          1.8204 1.8265
+  std. dev.     0.3839 0.3787
+  weight sum     23858    830
+  precision          1      1
+
+A005
+  mean          1.8204 1.8193
+  std. dev.     0.3839 0.3848
+  weight sum     23858    830
+  precision          1      1
+
+A006
+  mean          1.8231 1.8181
+  std. dev.     0.3816 0.3858
+  weight sum     23858    830
+  precision          1      1
+
+A007
+  mean          1.8232 1.8084
+  std. dev.     0.3815 0.3935
+  weight sum     23858    830
+  precision          1      1
+
+A008
+  mean          1.8188 1.8241
+  std. dev.     0.3852 0.3807
+  weight sum     23858    830
+  precision          1      1
+
+A009
+  mean          1.8215 1.8157
+  std. dev.     0.3829 0.3878
+  weight sum     23858    830
+  precision          1      1
+
+A010
+  mean          1.8247 1.8133
+  std. dev.     0.3802 0.3897
+  weight sum     23858    830
+  precision          1      1
+
+A011
+  mean          1.8193 1.8398
+  std. dev.     0.3847 0.3668
+  weight sum     23858    830
+  precision          1      1
+
+A012
+  mean           1.819 1.8096
+  std. dev.      0.385 0.3926
+  weight sum     23858    830
+  precision          1      1
+
+A013
+  mean          1.8169 1.8133
+  std. dev.     0.3867 0.3897
+  weight sum     23858    830
+  precision          1      1
+
+A014
+  mean          1.8239 1.8241
+  std. dev.     0.3809 0.3807
+  weight sum     23858    830
+  precision          1      1
+
+A015
+  mean          1.8207  1.841
+  std. dev.     0.3836 0.3657
+  weight sum     23858    830
+  precision          1      1
+
+A016
+  mean           1.818 1.8265
+  std. dev.     0.3858 0.3787
+  weight sum     23858    830
+  precision          1      1
+
+A017
+  mean          1.8204 1.8253
+  std. dev.     0.3838 0.3797
+  weight sum     23858    830
+  precision          1      1
+
+A018
+  mean          1.8216 1.8205
+  std. dev.     0.3829 0.3838
+  weight sum     23858    830
+  precision          1      1
+
+A019
+  mean          1.8197 1.8325
+  std. dev.     0.3845 0.3734
+  weight sum     23858    830
+  precision          1      1
+
+A020
+  mean          1.8201 1.8373
+  std. dev.     0.3841  0.369
+  weight sum     23858    830
+  precision          1      1
+
+A021
+  mean          1.8167 1.8084
+  std. dev.     0.3869 0.3935
+  weight sum     23858    830
+  precision          1      1
+
+A022
+  mean          1.8204 1.8072
+  std. dev.     0.3839 0.3945
+  weight sum     23858    830
+  precision          1      1
+
+A023
+  mean          1.8203 1.8265
+  std. dev.     0.3839 0.3787
+  weight sum     23858    830
+  precision          1      1
+
+A024
+  mean          1.8194 1.8229
+  std. dev.     0.3847 0.3818
+  weight sum     23858    830
+  precision          1      1
+
+A025
+  mean          1.8226 1.8277
+  std. dev.      0.382 0.3776
+  weight sum     23858    830
+  precision          1      1
+
+A026
+  mean          1.8204 1.8349
+  std. dev.     0.3839 0.3712
+  weight sum     23858    830
+  precision          1      1
+
+A027
+  mean          1.8222 1.8024
+  std. dev.     0.3823 0.3982
+  weight sum     23858    830
+  precision          1      1
+
+A028
+  mean          1.8201 1.8193
+  std. dev.     0.3841 0.3848
+  weight sum     23858    830
+  precision          1      1
+
+
+
+Time taken to build model: 0.18 seconds
+
+=== Stratified cross-validation ===
+=== Summary ===
+
+Correctly Classified Instances       23858               96.638  %
+Incorrectly Classified Instances       830                3.362  %
+Kappa statistic                          0     
+Mean absolute error                      0.0653
+Root mean squared error                  0.1805
+Relative absolute error                100.3953 %
+Root relative squared error            100.1279 %
+Total Number of Instances            24688     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 1.000    1.000    0.966      1.000    0.983      ?        0.473     0.964     0
+                 0.000    0.000    ?          0.000    ?          ?        0.473     0.031     1
+Weighted Avg.    0.966    0.966    ?          0.966    ?          ?        0.473     0.933     
+
+=== Confusion Matrix ===
+
+     a     b   <-- classified as
+ 23858     0 |     a = 0
+   830     0 |     b = 1
+

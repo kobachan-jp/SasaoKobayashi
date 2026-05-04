@@ -1,0 +1,38 @@
+{
+  "name": "espresso-logic-minimizer",
+  "main": "index.js",
+  "version": "2.0.3",
+  "author": "Sebastien Cottinet (https://github.com/scottinet)",
+  "description": "A NodeJS bridge to the Espresso heuristic logic minimizer",
+  "keywords": [
+    "espresso",
+    "logic",
+    "heuristic",
+    "minimizer",
+    "canonical",
+    "normal form",
+    "canonicalization"
+  ],
+  "scripts": {
+    "configure": "node-gyp configure",
+    "build": "node-gyp build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/scottinet/espresso-logic-minimizer.git"
+  },
+  "dependencies": {
+    "bindings": "^1.5.0",
+    "debug": "^4.1.1",
+    "nan": "^2.14.0",
+    "tmp": "0.1.0"
+  },
+  "devDependencies": {
+    "node-gyp": "^6.0.0"
+  },
+  "engines": {
+    "node": ">= 4.4.5",
+    "npm": ">= 2.14.4"
+  },
+  "license": "MIT"
+}

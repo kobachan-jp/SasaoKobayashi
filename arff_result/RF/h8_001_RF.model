@@ -1,0 +1,72 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.trees.RandomForest -P 100 -I 100 -num-slots 1 -K 0 -M 1.0 -V 0.001 -S 1
+Relation:     h8_001.min
+Instances:    23835
+Attributes:   29
+              A001
+              A002
+              A003
+              A004
+              A005
+              A006
+              A007
+              A008
+              A009
+              A010
+              A011
+              A012
+              A013
+              A014
+              A015
+              A016
+              A017
+              A018
+              A019
+              A020
+              A021
+              A022
+              A023
+              A024
+              A025
+              A026
+              A027
+              A028
+              class
+Test mode:    10-fold cross-validation
+
+=== Classifier model (full training set) ===
+
+RandomForest
+
+Bagging with 100 iterations and base learner
+
+weka.classifiers.trees.RandomTree -K 0 -M 1.0 -V 0.001 -S 1 -do-not-check-capabilities
+
+Time taken to build model: 4.4 seconds
+
+=== Stratified cross-validation ===
+=== Summary ===
+
+Correctly Classified Instances       22991               96.459  %
+Incorrectly Classified Instances       844                3.541  %
+Kappa statistic                          0.031 
+Mean absolute error                      0.0722
+Root mean squared error                  0.1917
+Relative absolute error                103.9446 %
+Root relative squared error            102.902  %
+Total Number of Instances            23835     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 1.000    0.984    0.965      1.000    0.982      0.125    0.549     0.969     0
+                 0.016    0.000    1.000      0.016    0.032      0.125    0.549     0.058     1
+Weighted Avg.    0.965    0.948    0.966      0.965    0.948      0.125    0.549     0.936     
+
+=== Confusion Matrix ===
+
+     a     b   <-- classified as
+ 22977     0 |     a = 0
+   844    14 |     b = 1
+

@@ -1,0 +1,136 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.functions.Logistic -R 1.0E-8 -M -1 -num-decimal-places 4
+Relation:     h8_003.min
+Instances:    23844
+Attributes:   29
+              A001
+              A002
+              A003
+              A004
+              A005
+              A006
+              A007
+              A008
+              A009
+              A010
+              A011
+              A012
+              A013
+              A014
+              A015
+              A016
+              A017
+              A018
+              A019
+              A020
+              A021
+              A022
+              A023
+              A024
+              A025
+              A026
+              A027
+              A028
+              class
+Test mode:    10-fold cross-validation
+
+=== Classifier model (full training set) ===
+
+Logistic Regression with ridge parameter of 1.0E-8
+Coefficients...
+               Class
+Variable           0
+====================
+A001         -0.2177
+A002          0.0377
+A003         -0.0642
+A004          -0.055
+A005         -0.0232
+A006         -0.2323
+A007          0.0031
+A008         -0.0049
+A009           0.039
+A010          0.0594
+A011          0.0292
+A012          0.0361
+A013          0.0194
+A014          0.0287
+A015         -0.1542
+A016          0.0512
+A017         -0.1415
+A018           0.053
+A019         -0.0986
+A020          0.0885
+A021         -0.0799
+A022         -0.0414
+A023         -0.0124
+A024         -0.0585
+A025          0.0609
+A026           0.049
+A027          0.2307
+A028         -0.2044
+Intercept     4.3424
+
+
+Odds Ratios...
+               Class
+Variable           0
+====================
+A001          0.8044
+A002          1.0384
+A003          0.9378
+A004          0.9465
+A005          0.9771
+A006          0.7927
+A007          1.0031
+A008          0.9951
+A009          1.0398
+A010          1.0612
+A011          1.0296
+A012          1.0368
+A013          1.0196
+A014          1.0291
+A015          0.8571
+A016          1.0525
+A017           0.868
+A018          1.0545
+A019          0.9061
+A020          1.0925
+A021          0.9232
+A022          0.9594
+A023          0.9877
+A024          0.9432
+A025          1.0628
+A026          1.0502
+A027          1.2595
+A028          0.8151
+
+
+Time taken to build model: 0.27 seconds
+
+=== Stratified cross-validation ===
+=== Summary ===
+
+Correctly Classified Instances       22933               96.1793 %
+Incorrectly Classified Instances       911                3.8207 %
+Kappa statistic                          0     
+Mean absolute error                      0.0735
+Root mean squared error                  0.1918
+Relative absolute error                 99.9187 %
+Root relative squared error            100.0468 %
+Total Number of Instances            23844     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 1.000    1.000    0.962      1.000    0.981      ?        0.518     0.963     0
+                 0.000    0.000    ?          0.000    ?          ?        0.518     0.040     1
+Weighted Avg.    0.962    0.962    ?          0.962    ?          ?        0.518     0.928     
+
+=== Confusion Matrix ===
+
+     a     b   <-- classified as
+ 22933     0 |     a = 0
+   911     0 |     b = 1
+
