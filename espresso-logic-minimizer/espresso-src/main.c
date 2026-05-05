@@ -282,6 +282,17 @@ int main(int argc, char **argv)
 	pcover D_remain;
 
 	check_distance(PLA->F,PLA->D,&D_adj,&D_remain);
+
+	pcube p, last;
+    int out_pos = cube.first_part[cube.output];     // 1ビット目 (10の'1')
+    int out_neg = cube.first_part[cube.output] + 1; // 2ビット目 (01の'1')
+
+    // 隣接したものは「病気 (10)」として Fセットへ
+    foreach_set(D_adj, last, p) {
+        set_insert(p, out_pos);  // 1番目を 1 に
+        set_remove(p, out_neg);  // 2番目を 0 に
+    }
+
 	printf("after adjacent\n");
 	printf("D_adjacent-----------\n");
 	cprint(D_adj);
