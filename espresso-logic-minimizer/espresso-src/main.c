@@ -338,13 +338,12 @@ int main(int argc, char **argv)
 			D_adj = sf_addset(D_adj,d);
 		}
 	}
-/*
+
 	printf("--- Contents of adjacent ---\n");
 	cprint(D_adj);
 	printf("--- Contents of remain ---\n");
 	cprint(D_remain);
 	printf("---  END Of Contents of remain ---\n");
-	*/
 	
 	free_cover(PLA->D);
 	PLA->D = D_remain;
