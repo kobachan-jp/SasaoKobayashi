@@ -3,7 +3,7 @@ SRC := $(wildcard *.c)
 OBJ := ${SRC:.c=.o}
 
 TARGETDIR := ../bin
-TARGET := $(TARGETDIR)/espresso0505_koteihitei.exe
+TARGET := $(TARGETDIR)/espresso0505_checkdistance.exe
 
 CFLAGS += -pg
 LDFLAGS += -pg
