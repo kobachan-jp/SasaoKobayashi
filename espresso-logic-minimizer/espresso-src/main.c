@@ -12,7 +12,7 @@
  *
  *  Old style -do xxx, -out xxx, etc. are still supported.
  */
-#include <stdio.h>
+
 #include "espresso.h"
 #include "main.h"		/* table definitions for options */
 #include <unistd.h>
@@ -27,30 +27,6 @@ void backward_compatibility_hack(int *argc, char **argv, int *option, int *out_t
 void runtime(void);
 void usage(void);
 bool check_arg(int *argc, register char **argv, register char *s);
-
-void kotei_hitei(pcube c, unsigned int *a_out, unsigned int *b_out){
-		unsigned int a = 0;//肯定
-		unsigned int b = 0;//否定
-		unsigned int mask = 1;
-		// GETINPUT(d, i) は i番目の変数の値を 0, 1, 2, 3 のいずれかで返す
-        // 1 (BINARY_0) : 否定リテラル
-        // 2 (BINARY_1) : 肯定リテラル
-        // 3 (DASH)     : Don't care
-		for(int i=0; i < cube.num_binary_vars; i++){
-			int val = GETINPUT(c, i);
-		if(val == 2){
-			a |= mask;
-		}
-		if(val == 1){
-			b |= mask;
-		} 
-		mask <<= 1;
-		}
-		*a_out = a ^ (-1);
-		*b_out = b ^ (-1);
-
-		return;
-	}
 
 void check_distance(pcover F, pcover D, pcover *adj, pcover *remain){
 	pcube f, d, lastF, lastD;
@@ -270,7 +246,6 @@ int main(int argc, char **argv)
 /******************** Espresso operations ********************/
 
     case KEY_ESPRESSO:
-	
 	Fold = sf_save(PLA->F);
 	PLA->F = espresso(PLA->F, PLA->D, PLA->R);
 	EXECUTE(error=verify(PLA->F,Fold,PLA->D), VERIFY_TIME, PLA->F, cost);
@@ -281,79 +256,41 @@ int main(int argc, char **argv)
 	} else {
 	    free_cover(Fold);
 	}
-	
+	//PLA->R = espresso(PLA->R, PLA->D, PLA->F);
 	//PLA->F = reduce(PLA->F,PLA->D);
+
 	/*DC = U #(F U R)*/
 	pcover ON_OFF = sf_join(PLA->F,PLA->R);
 
-	//complimentでDCセットをつくる.
+	//DCセットをつくる.
+	//pcover univ = sf_new(1,cube.size);
+	//cprint(univ);
+	//univ = sf_addset(univ,cube.fullset);
+	//cprint(univ);
+	//sharp演算でDCを抽出.
 	free_cover(PLA->D);
 	pset *T = cube1list(ON_OFF);
 	PLA->D = complement(T);
+	//PLA->D = cv_dsharp(univ, ON_OFF);
 	printf("After complement of ON_OFF\n");
 	printf("PLA->D count : %d\n",PLA->D->count);
-	free_cover(ON_OFF);
-	
-	/*adjacent*/
+	cprint(PLA->D);
+	printf("-------------------\n");
+
+	//adjacent
 	pcover D_adj = new_cover(PLA->D->count);
 	pcover D_remain;
-	
-	
-	pcube  f,d,last_d,last_f;
-	int is_adjacent;
-	unsigned int k_d,k_f,h_d,h_f,and_h,and_k,k_or_h;
-	int output_bit = cube.first_part[cube.output];
-		foreach_set(PLA->D, last_d, d){
-		k_d = 0;
-		h_d = 0;
-		kotei_hitei(d,&k_d,&h_d);
-		foreach_set(PLA->F,last_f,f){
-			k_f = 0;
-			h_f = 0;
-			kotei_hitei(f,&k_f,&h_f);
-			and_k = k_d & k_f;
-			and_h = h_d & h_f;
-			k_or_h = and_k | and_h;
-			//is_adjacent = count_ones(~(k_or_h));
-			is_adjacent = __builtin_popcount(~(k_or_h));
 
-			/*
-			printf("Checking Distance...\n");
-            printf("  k_d: %02X, h_d: %02X\n", k_d, h_d);
-            printf("  k_f: %02X, h_f: %02X\n", k_f, h_f);
-            printf("  k_or_h (matches): %02X, diff_bits (inverted): %02X\n", k_or_h, ~(k_or_h));
-            printf("  Result Distance: %d\n", is_adjacent);
-            printf("--------------------------------------\n");
-            // --- デバッグ出力ここまで ---
-			*/
-
-			if(is_adjacent == 1){
-				break;
-			}
-		}
-		if(is_adjacent > 1){
-			D_remain = sf_addset(D_remain, d);
-			
-		}else{
-			D_adj = sf_addset(D_adj,d);
-		}
-	}
-
-	printf("--- Contents of adjacent ---\n");
+	check_distance(PLA->F,PLA->D,&D_adj,&D_remain);
+	printf("after adjacent\n");
+	printf("D_adjacent-----------\n");
 	cprint(D_adj);
-	printf("--- Contents of remain ---\n");
+	printf("D_remain-----------\n");
 	cprint(D_remain);
-	printf("---  END Of Contents of remain ---\n");
+	printf("----------------------\n");
+
 	
-	free_cover(PLA->D);
-	PLA->D = D_remain;
-	PLA->F = sf_append(PLA->F,D_adj);
-			
-	//free_cover(PLA->R); 
-    //PLA->R = complement(cube2list(PLA->F, PLA->D)); 
-	out_type = FR_type;
-	break;	
-	
+	break;
 
     case KEY_MANY_ESPRESSO: {
 	int pla_type;
