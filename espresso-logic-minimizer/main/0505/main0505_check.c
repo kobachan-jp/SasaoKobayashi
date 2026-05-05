@@ -11,8 +11,10 @@
  *  Main driver for espresso
  *
  *  Old style -do xxx, -out xxx, etc. are still supported.
+ * check_distance用,最後にD_adjの出力を10に変更して加えている.
+ * 
  */
-#include <stdio.h>
+
 #include "espresso.h"
 #include "main.h"		/* table definitions for options */
 #include <unistd.h>
@@ -27,6 +29,41 @@ void backward_compatibility_hack(int *argc, char **argv, int *option, int *out_t
 void runtime(void);
 void usage(void);
 bool check_arg(int *argc, register char **argv, register char *s);
+
+void check_distance(pcover F, pcover D, pcover *adj, pcover *remain){
+	pcube f, d, lastF, lastD;
+	pcover current_D = sf_save(D);
+	pcover next_D;
+	foreach_set(F, lastF, f){
+		next_D = new_cover(current_D -> count);
+		foreach_set(current_D, lastD, d){
+			int distance = 0;
+			for(int v = 0; v<cube.num_binary_vars;v++){
+				int valF = GETINPUT(f, v);
+				int valD = GETINPUT(d, v);
+			if(valF == 3 || valD == 3){
+				continue;
+			}else if(valF != valD){
+				distance ++;
+			}
+			
+			if(distance > 1){
+				next_D = sf_addset(next_D, d);
+				break;
+			}
+		}
+		if(distance == 1){
+			*adj = sf_addset(*adj, d);
+		}
+	}
+	free_cover(current_D);
+	current_D = next_D;
+	if(current_D->count == 0){
+		break;
+	}
+}
+*remain = current_D;
+}
 
 int main(int argc, char **argv)
 {
@@ -211,41 +248,6 @@ int main(int argc, char **argv)
 /******************** Espresso operations ********************/
 
     case KEY_ESPRESSO:
-	/*DC = U #(F U R)*/
-	pcover ON_OFF = sf_join(PLA->F,PLA->R);
-
-	//DCセットをつくる.
-	pcover univ = sf_new(1,cube.size);
-	univ = sf_addset(univ,cube.fullset);
-	//sharp演算でDCを抽出.
-	free_cover(PLA->D);
-	PLA->D = cv_sharp(univ, ON_OFF);
-	free_cover(ON_OFF);
-	
-	/*adjacent*/
-	pcover D_adj = new_cover(PLA->D->count);
-	pcover D_remain = new_cover(PLA->D->count);
-	pcube  f,d,last_d,last_f;
-	int is_adjacent;
-	int output_bit = cube.first_part[cube.output];
-	foreach_set(PLA->D, last_d, d){
-		is_adjacent = 0;
-		foreach_set(PLA->F,last_f,f){
-				if(cdist01(f,d)==1){
-				is_adjacent=1;
-				break;
-			}
-		}
-		if(is_adjacent){
-			D_adj = sf_addset(D_adj,d);
-		}else{
-			D_remain = sf_addset(D_remain, d);
-		}
-	}
-
-	free_cover(PLA->D);
-	PLA->D = D_remain;
-	PLA->F = sf_append(PLA->F,D_adj);
 	Fold = sf_save(PLA->F);
 	PLA->F = espresso(PLA->F, PLA->D, PLA->R);
 	EXECUTE(error=verify(PLA->F,Fold,PLA->D), VERIFY_TIME, PLA->F, cost);
@@ -256,6 +258,50 @@ int main(int argc, char **argv)
 	} else {
 	    free_cover(Fold);
 	}
+	//PLA->R = espresso(PLA->R, PLA->D, PLA->F);
+	//PLA->F = reduce(PLA->F,PLA->D);
+
+	/*DC = U #(F U R)*/
+	pcover ON_OFF = sf_join(PLA->F,PLA->R);
+
+	//DCセットをつくる.
+	//pcover univ = sf_new(1,cube.size);
+	//cprint(univ);
+	//univ = sf_addset(univ,cube.fullset);
+	//cprint(univ);
+	//sharp演算でDCを抽出.
+	free_cover(PLA->D);
+	pset *T = cube1list(ON_OFF);
+	PLA->D = complement(T);
+	//PLA->D = cv_dsharp(univ, ON_OFF);
+	/*
+	printf("After complement of ON_OFF\n");
+	printf("PLA->D count : %d\n",PLA->D->count);
+	cprint(PLA->D);
+	printf("-------------------\n");
+	*/
+
+	//adjacent
+	pcover D_adj = new_cover(PLA->D->count);
+	pcover D_remain;
+
+	check_distance(PLA->F,PLA->D,&D_adj,&D_remain);
+
+	pcube p, last;
+    int out_pos = cube.first_part[cube.output];     // 1ビット目 (10の'1')
+    int out_neg = cube.first_part[cube.output] + 1; // 2ビット目 (01の'1')
+
+	
+
+    // 隣接したものは「病気 (10)」として Fセットへ
+    foreach_set(D_adj, last, p) {
+        set_insert(p, out_pos);  // 1番目を 1 に
+        set_remove(p, out_neg);  // 2番目を 0 に
+    }
+	
+	free_cover(PLA->D);
+	PLA->D=D_remain;
+	PLA->F=sf_append(PLA->F,D_adj);
 	break;
 
     case KEY_MANY_ESPRESSO: {

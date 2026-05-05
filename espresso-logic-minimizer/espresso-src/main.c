@@ -272,35 +272,37 @@ int main(int argc, char **argv)
 	pset *T = cube1list(ON_OFF);
 	PLA->D = complement(T);
 	//PLA->D = cv_dsharp(univ, ON_OFF);
+	/*
 	printf("After complement of ON_OFF\n");
 	printf("PLA->D count : %d\n",PLA->D->count);
 	cprint(PLA->D);
 	printf("-------------------\n");
+	*/
 
 	//adjacent
 	pcover D_adj = new_cover(PLA->D->count);
 	pcover D_remain;
-
+	printf("PLA->F count : %d\n",PLA->F->count);
+	printf("PLA->D count : %d\n",PLA->D->count);
 	check_distance(PLA->F,PLA->D,&D_adj,&D_remain);
-
+	printf("D_adj count : %d\n",D_adj->count);
+	printf("D_remain count : %d\n",D_remain->count);
 	pcube p, last;
     int out_pos = cube.first_part[cube.output];     // 1ビット目 (10の'1')
     int out_neg = cube.first_part[cube.output] + 1; // 2ビット目 (01の'1')
+
+	
 
     // 隣接したものは「病気 (10)」として Fセットへ
     foreach_set(D_adj, last, p) {
         set_insert(p, out_pos);  // 1番目を 1 に
         set_remove(p, out_neg);  // 2番目を 0 に
     }
-
-	printf("after adjacent\n");
-	printf("D_adjacent-----------\n");
-	cprint(D_adj);
-	printf("D_remain-----------\n");
-	cprint(D_remain);
-	printf("----------------------\n");
-
 	
+	free_cover(PLA->D);
+	PLA->D=D_remain;
+	PLA->F=sf_append(PLA->F,D_adj);
+	printf("after adjacent PLA->F count : %d\n",PLA->F->count);
 	break;
 
     case KEY_MANY_ESPRESSO: {
