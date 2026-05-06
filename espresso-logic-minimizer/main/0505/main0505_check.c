@@ -265,14 +265,19 @@ int main(int argc, char **argv)
 	pcover ON_OFF = sf_join(PLA->F,PLA->R);
 
 	//DCセットをつくる.
-	//pcover univ = sf_new(1,cube.size);
-	//cprint(univ);
+	printf("PLA->F count: %d\n",PLA->F->count);
+	cprint(PLA->F);
+	printf("PLA->R count : %d\n",PLA->R->count);
+	cprint(PLA->R);
 	//univ = sf_addset(univ,cube.fullset);
 	//cprint(univ);
 	//sharp演算でDCを抽出.
 	free_cover(PLA->D);
 	pset *T = cube1list(ON_OFF);
 	PLA->D = complement(T);
+	printf("PLA->D count: %d\n",PLA->D->count);
+	cprint(PLA->D);
+
 	//PLA->D = cv_dsharp(univ, ON_OFF);
 	/*
 	printf("After complement of ON_OFF\n");
@@ -298,10 +303,16 @@ int main(int argc, char **argv)
         set_insert(p, out_pos);  // 1番目を 1 に
         set_remove(p, out_neg);  // 2番目を 0 に
     }
-	
+	printf("D_adj count: %d\n",D_adj->count);
+	cprint(D_adj);
+	printf("D_remain count: %d\n",D_remain->count);
+	cprint(D_remain);
 	free_cover(PLA->D);
 	PLA->D=D_remain;
 	PLA->F=sf_append(PLA->F,D_adj);
+	
+	printf("PLA->F count: %d\n",PLA->F->count);
+	cprint(PLA->F);
 	break;
 
     case KEY_MANY_ESPRESSO: {
