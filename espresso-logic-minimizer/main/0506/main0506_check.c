@@ -262,18 +262,22 @@ int main(int argc, char **argv)
 	pcover ON_OFF = sf_join(PLA->F,PLA->R);
 
 	//DCセットをつくる.
-	printf("after ESPRESSO\n");
 	printf("PLA->F count: %d\n",PLA->F->count);
+	cprint(PLA->F);
 	printf("PLA->R count : %d\n",PLA->R->count);
-		
+	cprint(PLA->R);
+	
 	free_cover(PLA->D);
 	pset *T = cube1list(ON_OFF);
 	PLA->D = complement(T);
 
 	printf("After complement of ON_OFF\n");
 	printf("PLA->F count : %d\n",PLA->F->count);
+	cprint(PLA->F);
 	printf("PLA->D count : %d\n",PLA->D->count);
+	cprint(PLA->D);
 	printf("PLA->R count : %d\n",PLA->R->count);
+	cprint(PLA->R);
 	free_cover(ON_OFF);
 
 
@@ -287,21 +291,24 @@ int main(int argc, char **argv)
 	pcube p, last;
 	foreach_set(PLA->D, last, p){
 		if(is_in_set(p,out_pos) && !is_in_set(p,out_neg)){
-			D_pos_only = sf_addset(D_pos_only,p);
+			sf_addset(D_pos_only,p);
 		}else{
-			D_neg_new = sf_addset(D_neg_new,p);
+			sf_addset(D_neg_new,p);
 		}
 	}
 	foreach_set(PLA->F, last, p){
 		if(is_in_set(p,out_pos) && !is_in_set(p,out_neg)){
-			F_pos_only = sf_addset(F_pos_only,p);
+			sf_addset(F_pos_only,p);
 		}
 	}
 	printf("After separated\n");
 	printf("D_pos_only count : %d\n",D_pos_only->count);
+	cprint(D_pos_only);
 	printf("D_neg_new count : %d\n",D_neg_new->count);
+	cprint(D_neg_new);
 	printf("F_pos_only count: %d\n",F_pos_only->count);
-	
+	cprint(F_pos_only);
+
 	//adjacent
 	pcover D_adj = new_cover(D_pos_only->count);
 	pcover D_remain;
@@ -309,14 +316,18 @@ int main(int argc, char **argv)
 	check_distance(F_pos_only,D_pos_only,&D_adj,&D_remain);
 
 	printf("D_adj count: %d\n",D_adj->count);
+	cprint(D_adj);
 	printf("D_remain count: %d\n",D_remain->count);
+	cprint(D_remain);
 
 	free_cover(PLA->D);
 	PLA->D = D_remain;
 	PLA->D = sf_append(PLA->D,D_neg_new);
 	PLA->F = sf_append(PLA->F,D_adj);
 	printf("after append PLA->F count : %d\n",PLA->F->count);
+	cprint(PLA->F);
 	printf("after append PLA->D count : %d\n",PLA->D->count);
+	cprint(PLA->D);
 	break;	
 
 
