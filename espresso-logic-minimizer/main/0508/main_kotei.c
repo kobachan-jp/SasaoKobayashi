@@ -29,13 +29,6 @@ void runtime(void);
 void usage(void);
 bool check_arg(int *argc, register char **argv, register char *s);
 
-void print_binary(unsigned int x)
-{
-    for(int i = cube.num_binary_vars - 1; i >= 0; i--) {
-        printf("%d", (x >> i) & 1);
-    }
-    printf("\n");
-}
 void kotei_hitei(pcube c, unsigned int *a_out, unsigned int *b_out){
 		unsigned int a = 0;//肯定
 		unsigned int b = 0;//否定
@@ -326,7 +319,7 @@ int main(int argc, char **argv)
 		if(is_in_set(p,out_pos) && !is_in_set(p,out_neg)){
 			D_pos_only = sf_addset(D_pos_only,p);
 		}else{
-			D_neg_new = sf_addset(D_neg_new,p);
+			D_pos_only = sf_addset(D_neg_new,p);
 		}
 	}
 	foreach_set(PLA->F, last, p){
@@ -347,23 +340,13 @@ int main(int argc, char **argv)
 	int is_adjacent;
 	unsigned int k_d,k_f,h_d,h_f,and_h,and_k,k_or_h;
 		foreach_set(D_pos_only, last_d, d){
-		print_cube(stdout,d,"01");
 		k_d = 0;
 		h_d = 0;
 		kotei_hitei(d,&k_d,&h_d);
-		//printf("kotei D : ");
-		//print_binary(k_d);
-		//printf("hitei D :");
-		//print_binary(h_d);		
 		foreach_set(F_pos_only,last_f,f){
-			print_cube(stdout,f,"01");
 			k_f = 0;
 			h_f = 0;
 			kotei_hitei(f,&k_f,&h_f);
-			//printf("kotei F : ");
-			//print_binary(k_f);
-			//printf("hitei F :");
-			//print_binary(h_f);		
 			and_k = k_d & k_f;
 			and_h = h_d & h_f;
 			k_or_h = and_k | and_h;
