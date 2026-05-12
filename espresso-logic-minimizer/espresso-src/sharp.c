@@ -185,7 +185,7 @@ pcover dsharp(pset a, pset b)
 
 /* cv_intersect -- form the intersection of two covers */
 
-#define MAGIC 500               /* save 500 cubes before containment */
+#define MAGIC 5000          /* save 500 cubes before containment */
 
 pcover cv_intersect(pset_family A, pset_family B)
 {
