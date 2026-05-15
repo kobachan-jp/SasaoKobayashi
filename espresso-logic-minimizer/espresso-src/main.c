@@ -29,13 +29,6 @@ void runtime(void);
 void usage(void);
 bool check_arg(int *argc, register char **argv, register char *s);
 
-void print_binary(unsigned int x)
-{
-    for(int i = cube.num_binary_vars - 1; i >= 0; i--) {
-        printf("%d", (x >> i) & 1);
-    }
-    printf("\n");
-}
 void kotei_hitei(pcube c, unsigned int *a_out, unsigned int *b_out){
 		unsigned int a = 0;//肯定
 		unsigned int b = 0;//否定
@@ -295,18 +288,21 @@ int main(int argc, char **argv)
 	//PLA->F = reduce(PLA->F,PLA->D);
 	/*DC = U #(F U R)*/
 	pcover ON_OFF = sf_join(PLA->F,PLA->R);
-
-	//complimentでDCセットをつくる.
+	pcover univ = sf_new(1,cube.size);
+	univ = sf_addset(univ,cube.fullset);
 	free_cover(PLA->D);
-	pset *T = cube1list(ON_OFF);
-	PLA->D = complement(T);
+	PLA->D = cv_dsharp(univ, ON_OFF);
+	//complimentでDCセットをつくる.
+	//free_cover(PLA->D);
+	//pset *T = cube1list(ON_OFF);
+	//PLA->D = complement(T);
 	//printf(" Before irredundant PLA->D count: %d\n",PLA->D->count);
 	//cprint(PLA->D);
 	//irredundant
 	//EXECUTE(PLA->D = irredundant(PLA->D, ON_OFF), IRRED_TIME, PLA->D, cost);
 	//printf("irredundant of PLA->D\n");
 	//cprint(PLA->D);
-		
+/*		
 	printf("After complement of ON_OFF\n");
 	printf("PLA->F count : %d\n",PLA->F->count);
 	printf("PLA->D count : %d\n",PLA->D->count);
@@ -315,6 +311,7 @@ int main(int argc, char **argv)
 
 
 	/* 出力ビットの位置を取得 */
+/*
 	int out_pos = cube.first_part[cube.output];     
 	int out_neg = cube.first_part[cube.output] + 1; 
 	//10のみ抽出する
@@ -326,7 +323,7 @@ int main(int argc, char **argv)
 		if(is_in_set(p,out_pos) && !is_in_set(p,out_neg)){
 			D_pos_only = sf_addset(D_pos_only,p);
 		}else{
-			D_neg_new = sf_addset(D_neg_new,p);
+			D_pos_only = sf_addset(D_neg_new,p);
 		}
 	}
 	foreach_set(PLA->F, last, p){
@@ -339,6 +336,7 @@ int main(int argc, char **argv)
 	printf("D_neg_new count : %d\n",D_neg_new->count);
 	printf("F_pos_only count: %d\n",F_pos_only->count);
 	/*adjacent*/
+/*	
 	pcover D_adj = new_cover(D_pos_only->count);
 	pcover D_remain = new_cover(D_pos_only->count);
 	
@@ -347,23 +345,13 @@ int main(int argc, char **argv)
 	int is_adjacent;
 	unsigned int k_d,k_f,h_d,h_f,and_h,and_k,k_or_h;
 		foreach_set(D_pos_only, last_d, d){
-		print_cube(stdout,d,"01");
 		k_d = 0;
 		h_d = 0;
 		kotei_hitei(d,&k_d,&h_d);
-		//printf("kotei D : ");
-		//print_binary(k_d);
-		//printf("hitei D :");
-		//print_binary(h_d);		
 		foreach_set(F_pos_only,last_f,f){
-			print_cube(stdout,f,"01");
 			k_f = 0;
 			h_f = 0;
 			kotei_hitei(f,&k_f,&h_f);
-			//printf("kotei F : ");
-			//print_binary(k_f);
-			//printf("hitei F :");
-			//print_binary(h_f);		
 			and_k = k_d & k_f;
 			and_h = h_d & h_f;
 			k_or_h = and_k | and_h;
@@ -391,6 +379,7 @@ int main(int argc, char **argv)
 	PLA->F = sf_append(PLA->F,D_adj);
 	printf("after append PLA->F count : %d\n",PLA->F->count);
 	printf("after append PLA->D count : %d\n",PLA->D->count);
+*/
 	break;	
 	
 
