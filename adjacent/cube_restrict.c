@@ -27,7 +27,8 @@ Cube* duplicate_list(const Cube* head) {
     return new_head;
 }
 
-Cube* create_union_F(const Cube* list_10, const Cube* list_01) {
+
+Cube* create_union_F_or_R(const Cube* list_10, const Cube* list_01) {
     Cube* head_10 = duplicate_list(list_10);
     Cube* head_01 = duplicate_list(list_01);
     
@@ -43,28 +44,31 @@ Cube* create_union_F(const Cube* list_10, const Cube* list_01) {
     return head_10;
 }
 
-Cube* intersect_cube_with_universe(const Cube* c, const Cube* uni) {
-    uint64_t p = c->pos_bits & uni->pos_bits;
-    uint64_t n_b = c->neg_bits & uni->neg_bits;
-    
-    if ((~p & ~n_b) != 0ULL) {
-        return NULL; 
+/*
+ * すべての変数が '-' (Don't Care) となる Universe Cube を生成して返す関数
+*/
+Cube* create_universe_cube(void) {
+    Cube* uni = alloc_cube();
+    if (!uni) {
+        fprintf(stderr, "Error: Failed to allocate memory for Universe Cube.\n");
+        return NULL;
     }
+
+    uni->pos_bits = ~0ULL; // 0xffffffffffffffff
+    uni->neg_bits = ~0ULL; // 0xffffffffffffffff
+    uni->next = NULL;
     
-    Cube* res = alloc_cube();
-    if (!res) return NULL;
-    res->pos_bits = p;
-    res->neg_bits = n_b;
-    return res;
+    return uni;
 }
 
-Cube* compute_restriction_optimized(const Cube* list_10, const Cube* list_01, const Cube* universe) {
+Cube* compute_restriction_optimized(const Cube* list_10, const Cube* list_01) {
     Cube* F = create_union_F(list_10, list_01);
     
     Cube* G_head = NULL;
     Cube* G_tail = NULL;
     Cube* curr_F = F;
-    
+    Cube* universe = create_universe_cube();
+
     uint64_t not_uni_pos = ~universe->pos_bits;
     uint64_t not_uni_neg = ~universe->neg_bits;
     
@@ -99,6 +103,6 @@ Cube* compute_restriction_optimized(const Cube* list_10, const Cube* list_01, co
     }
     
     free_cube_list(F);
-    
+    free_cube_list(universe);
     return G_head;
 }

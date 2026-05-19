@@ -2,6 +2,8 @@
 #include "cube_pool.h" 
 #include "pla_io.h"    
 #include "cube_restrict.h"
+#include "cube_complement.h"
+
 
 int main(void) {
     // 1. システム（プール）の初期化
