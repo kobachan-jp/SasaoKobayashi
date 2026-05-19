@@ -3,7 +3,7 @@ SRC := $(wildcard *.c)
 OBJ := ${SRC:.c=.o}
 
 TARGETDIR := ../bin
-TARGET := $(TARGETDIR)/espresso0508_kotei.exe
+TARGET := $(TARGETDIR)/espresso_dsharp.exe
 
 CFLAGS += -pg
 LDFLAGS += -pg
