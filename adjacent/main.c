@@ -31,7 +31,7 @@ int main(void) {
     Cube* F_or_R = create_union_F_or_R(output_10_list,output_01_list);
     Cube* G = compute_restriction_optimized(F_or_R, uni);
     //4.Gの否定を求める(9.4.2)
-
+    
     // 3. 後片付け
     free_cube_list(output_10_list);
     free_cube_list(output_01_list);

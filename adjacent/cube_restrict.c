@@ -65,7 +65,7 @@ Cube* compute_restriction_optimized(const Cube* F, const Cube* c) {
     
     Cube* G_head = NULL;
     Cube* G_tail = NULL;
-    Cube* curr_F = F;
+    const Cube* curr_F = F;
     
 
     uint64_t not_uni_pos = ~c->pos_bits;
@@ -101,7 +101,5 @@ Cube* compute_restriction_optimized(const Cube* F, const Cube* c) {
         curr_F = curr_F->next;
     }
     
-    free_cube_list(F);
-    free_cube_list(c);
-    return G_head;
+     return G_head;
 }
