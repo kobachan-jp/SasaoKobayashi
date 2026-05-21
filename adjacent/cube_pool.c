@@ -36,3 +36,14 @@ void free_cube_list(Cube* head) {
         head = next;
     }
 }
+
+int count_cubes(const Cube* head) {
+    int count = 0;
+    const Cube* curr = head;
+    
+    while (curr != NULL) {
+        count++;
+        curr = curr->next;
+    }
+    return count;
+}
