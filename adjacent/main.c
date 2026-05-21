@@ -12,10 +12,11 @@ int main(void) {
     Cube* output_10_list = NULL;
     Cube* output_01_list = NULL;
     const char* filename = "test.pla";
+    int input_num = 0;
 
     // 2. ファイル読み込み
     printf("Reading PLA file: %s ...\n", filename);
-    if (read_pla_file(filename, &output_10_list, &output_01_list)) {
+    if (read_pla_file(filename, &output_10_list, &output_01_list, &input_num)) {
         printf("Successfully loaded PLA file!\n");
         //10と01のリストがきちんと読み込まれているか確認.
         print_cube_list("Output 10 Group", output_10_list);
@@ -30,7 +31,7 @@ int main(void) {
     Cube* F_or_R = create_union_F_or_R(output_10_list,output_01_list);
     Cube* G = compute_restriction_optimized(F_or_R, uni);
     //4.Gの否定を求める(9.4.2)
-    
+
     // 3. 後片付け
     free_cube_list(output_10_list);
     free_cube_list(output_01_list);
