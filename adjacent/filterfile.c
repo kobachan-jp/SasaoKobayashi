@@ -29,8 +29,6 @@ void trim_newline(const char* filename){
     if(fp == NULL){
         fprintf(stderr,"Cannot Open the file.\n");
         return;
-    }else{
-        fprintf(stdout,"Opened the file.\n");
     }
     while(fgets(line, sizeof(line),fp) != NULL){
 
@@ -51,10 +49,10 @@ void skip_directives(FILE *fp){
     }
 
     while (fgets(line, sizeof(line),fp) != NULL){
-        if(line[0] = '.'){
+        if(line[0] == '.'){
             continue;
         }
-        printf("%s\n",line);
+        printf("%s",line);
     }
     return;
 }
