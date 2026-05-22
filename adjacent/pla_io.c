@@ -51,7 +51,7 @@ void print_cube_list(const char* list_name, const Cube* head) {
     }
 }
 
-bool read_pla_file(const char* filename, Cube** list_10, Cube** list_01) {
+bool read_pla_file(const char* filename, Cube** list_10, Cube** list_01, int* input_number) {
     FILE* fp = fopen(filename, "r");
     if (!fp) {
         fprintf(stderr, "Error: Cannot open file '%s'\n", filename);
@@ -78,6 +78,8 @@ bool read_pla_file(const char* filename, Cube** list_10, Cube** list_01) {
             fgets(skip, sizeof(skip), fp);
         }
     }
+
+    *input_number = num_inputs;
 
     if (num_inputs < 1 || num_inputs > 64) {
         fprintf(stderr, "Error: Invalid number of inputs (%d).\n", num_inputs);

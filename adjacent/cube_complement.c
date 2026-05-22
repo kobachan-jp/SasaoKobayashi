@@ -5,7 +5,9 @@
 #include "cube_complement.h"
 #include "cube_restrict.h"
 #include "cube_pool.h"
-
+/*
+共通bitがあるcubeを探す
+*/
 Cube* intersect_two_cubes(const Cube* a, const Cube* b) {
     uint64_t p = a->pos_bits & b->pos_bits;
     uint64_t n_b = a->neg_bits & b->neg_bits;
@@ -18,7 +20,7 @@ Cube* intersect_two_cubes(const Cube* a, const Cube* b) {
     res->neg_bits = n_b;
     return res;
 }
-
+//ただcubeセットをくっつけているだけ
 Cube* append_lists_destructive(Cube* list1, Cube* list2) {
     if (!list1) return list2;
     if (!list2) return list1;
@@ -28,6 +30,7 @@ Cube* append_lists_destructive(Cube* list1, Cube* list2) {
     return list1;
 }
 
+//activeなbit探し
 int find_best_pivot_bit(const Cube* G, int n) {
     if (!G) return -1;
     
@@ -62,6 +65,42 @@ int find_best_pivot_bit(const Cube* G, int n) {
     return best_bit;
 }
 
+//activeな列を1としたcubeを作成
+Cube create_active_on_bit(int n, int pivot){
+    uint64_t mask = (1ULL << (n - 1 - pivot));
+    Cube c1 = { .pos_bits = ~0ULL, .neg_bits = ~0ULL & ~mask, .next = NULL }; 
+    return c1;
+}
+
+//activeな列を0としたcubeを作成
+Cube create_active_off_bit(int n, int pivot){
+
+    uint64_t mask = (1ULL << (n - 1 - pivot));
+    Cube c2 = { .pos_bits = ~0ULL & ~mask, .neg_bits = ~0ULL, .next = NULL }; 
+
+    return c2;
+}
+
+Cube* complement(Cube* G, int n){
+    //ex.9.10.1
+    int pivot = find_best_pivot_bit(G, n);
+    if(pivot == -1){
+        printf("cannot find best pivot\n");
+        exit(0);
+    }
+    Cube c1 = create_active_on_bit(n, pivot);
+    Cube c2 = create_active_off_bit(n, pivot);
+    Cube* G1 = compute_restriction_optimized(G, &c1);
+    Cube* G2 = compute_restriction_optimized(G, &c2);
+    //ex.9.10.2
+    int n1 = count_cubes(G1);
+    int n2 = count_cubes(G2);
+    //ここから再帰するぶぶんスタート
+
+}
+
+
+//制限で求めたFの否定を求める
 Cube* invert_single_cube(const Cube* c, int n) {
     Cube* res_head = NULL;
     Cube* res_tail = NULL;
@@ -136,17 +175,17 @@ Cube* compute_complement_rec(Cube* G, const Cube* c_accum, int n) {
         return final_res_head;
     }
     
-    uint64_t mask = (1ULL << (n - 1 - pivot));
     
-    Cube c1 = { .pos_bits = ~0ULL, .neg_bits = ~0ULL & ~mask, .next = NULL }; 
-    Cube c2 = { .pos_bits = ~0ULL & ~mask, .neg_bits = ~0ULL, .next = NULL }; 
+    
+    Cube c1 = create_active_on_bit(n,pivot);
+    Cube c2 = create_active_off_bit(n,pivot);
     
     Cube* next_c1 = intersect_two_cubes(c_accum, &c1);
     Cube* next_c2 = intersect_two_cubes(c_accum, &c2);
     
     // 💡 ここで cube_restrict の関数を呼び出します！
-    Cube* G1 = compute_restriction_optimized(G, NULL, &c1);
-    Cube* G2 = compute_restriction_optimized(G, NULL, &c2);
+    Cube* G1 = compute_restriction_optimized(G, NULL);
+    Cube* G2 = compute_restriction_optimized(G, NULL);
     
     Cube* res1 = NULL;
     Cube* res2 = NULL;

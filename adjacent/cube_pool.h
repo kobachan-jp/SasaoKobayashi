@@ -15,5 +15,5 @@ void init_cube_pool(void);
 Cube* alloc_cube(void);
 void free_cube(Cube* cube);
 void free_cube_list(Cube* head);
-
+int count_cubes(const Cube* head);
 #endif

@@ -61,20 +61,19 @@ Cube* create_universe_cube(void) {
     return uni;
 }
 
-Cube* compute_restriction_optimized(const Cube* list_10, const Cube* list_01) {
-    Cube* F = create_union_F(list_10, list_01);
+Cube* compute_restriction_optimized(const Cube* F, const Cube* c) {
     
     Cube* G_head = NULL;
     Cube* G_tail = NULL;
-    Cube* curr_F = F;
-    Cube* universe = create_universe_cube();
+    const Cube* curr_F = F;
+    
 
-    uint64_t not_uni_pos = ~universe->pos_bits;
-    uint64_t not_uni_neg = ~universe->neg_bits;
+    uint64_t not_uni_pos = ~c->pos_bits;
+    uint64_t not_uni_neg = ~c->neg_bits;
     
     while (curr_F != NULL) {
-        uint64_t p = curr_F->pos_bits & universe->pos_bits;
-        uint64_t n_b = curr_F->neg_bits & universe->neg_bits;
+        uint64_t p = curr_F->pos_bits & c->pos_bits;
+        uint64_t n_b = curr_F->neg_bits & c->neg_bits;
         
         if ((~p & ~n_b) != 0ULL) {
             curr_F = curr_F->next;
@@ -102,7 +101,5 @@ Cube* compute_restriction_optimized(const Cube* list_10, const Cube* list_01) {
         curr_F = curr_F->next;
     }
     
-    free_cube_list(F);
-    free_cube_list(universe);
-    return G_head;
+     return G_head;
 }
