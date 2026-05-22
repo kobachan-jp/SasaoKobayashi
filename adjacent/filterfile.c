@@ -25,12 +25,12 @@ void trim_newline(const char* filename){
 
     char line[256];
 
-    FILE* fp = fopen(filename, "r");
+    FILE *fp = fopen(filename, "r");
     if(fp == NULL){
-        printf("Cannot Open the file.\n");
+        fprintf(stderr,"Cannot Open the file.\n");
         return;
     }else{
-        printf("Opened the file.\n");
+        fprintf(stdout,"Opened the file.\n");
     }
     while(fgets(line, sizeof(line),fp) != NULL){
 
@@ -40,6 +40,21 @@ void trim_newline(const char* filename){
 
     fclose(fp);
     return;
+}
 
+void skip_directives(FILE *fp){
+    char line[256];
 
+    if(fp == NULL){
+        fprintf(stderr,"Cannot Find Input\n");
+        return;
+    }
+
+    while (fgets(line, sizeof(line),fp) != NULL){
+        if(line[0] = '.'){
+            continue;
+        }
+        printf("%s\n",line);
+    }
+    return;
 }

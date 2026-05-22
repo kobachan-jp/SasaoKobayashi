@@ -1,9 +1,10 @@
 #include <stdio.h>
-#include "file.h"
+#include "filterfile.h"
 
 int main(int argc, char *argv[]){
     if(argc != 2){
-        printf("Input The File\n");
+        fprintf(stderr,"Input The File\n");
+        return 0;
     }
     
     trim_newline(argv[1]);
