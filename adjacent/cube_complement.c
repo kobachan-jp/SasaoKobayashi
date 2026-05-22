@@ -30,6 +30,48 @@ Cube* append_lists_destructive(Cube* list1, Cube* list2) {
     return list1;
 }
 
+/**
+ * 集合F（Cubeのリスト）と、1つのCube c のAND（積集合）を計算し、新しいリストを返す
+ */
+Cube* intersect_list_and_cube(const Cube* F, const Cube* c) {
+    if (F == NULL || c == NULL) return NULL;
+
+    Cube* res_head = NULL;
+    Cube* res_tail = NULL;
+    const Cube* curr_F = F;
+
+    while (curr_F != NULL) {
+        // 💡 1. 集合Fの今の項と、Cube c のAND（ビット演算）をとる
+        uint64_t p = curr_F->pos_bits & c->pos_bits;
+        uint64_t n_b = curr_F->neg_bits & c->neg_bits;
+
+        // 💡 2. 矛盾チェック（posもnegも0のビットがあれば、ANDをとると消滅する）
+        if ((~p & ~n_b) != 0ULL) {
+            curr_F = curr_F->next;
+            continue; // 矛盾した項は飛ばす（リストに入れない）
+        }
+
+        // 💡 3. 矛盾しなければ、ANDがとれた新しいCubeをallocしてリストに追加
+        Cube* new_cube = alloc_cube();
+        if (new_cube != NULL) {
+            new_cube->pos_bits = p;
+            new_cube->neg_bits = n_b;
+            new_cube->next = NULL;
+
+            if (res_head == NULL) {
+                res_head = new_cube;
+                res_tail = new_cube;
+            } else {
+                res_tail->next = new_cube;
+                res_tail = new_cube;
+            }
+        }
+        curr_F = curr_F->next;
+    }
+
+    return res_head;
+}
+
 //activeなbit探し
 int find_best_pivot_bit(const Cube* G, int n) {
     if (!G) return -1;
@@ -95,8 +137,29 @@ Cube* complement(Cube* G, int n){
     //ex.9.10.2
     int n1 = count_cubes(G1);
     int n2 = count_cubes(G2);
+    Cube* not_G1 = NULL;
+    Cube* not_G2 = NULL;
     //ここから再帰するぶぶんスタート
+    if(n1 == 1){
+        not_G1 = invert_single_cube(G1,n);
+    }else{
+        not_G1 = complement(G1,n);
+    }
+    if(n2 == 1){
+        not_G2 = invert_single_cube(G2,n);
+    }else{
+        not_G2 = complement(G2,n);
+    }
 
+    Cube* final_res1 = intersect_list_and_cube(not_G1, &c1);
+    Cube* final_res2 = intersect_list_and_cube(not_G2, &c2);
+    
+    free_cube_list(G1);
+    free_cube_list(G2);
+    free_cube_list(not_G1);
+    free_cube_list(not_G2);
+    
+    return append_lists_destructive(final_res1, final_res2);
 }
 
 
