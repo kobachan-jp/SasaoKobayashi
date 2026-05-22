@@ -56,3 +56,19 @@ void skip_directives(FILE *fp){
     }
     return;
 }
+
+void extract_input(FILE *fp){
+    
+    char line[256];
+    char input[256], output[256];
+    if(fp == NULL){
+        fprintf(stderr, "Cannot Find Input.\n");
+        return;
+    }
+    while(fgets(line,sizeof(line),fp) != NULL){
+        if(sscanf(line, "%s %s", input, output)==2){
+            printf("%s\n",input);
+        }
+    }
+    return;
+}

@@ -5,4 +5,5 @@
 
 void trim_newline(const char* filename);
 void skip_directives(FILE *fp);
+void extract_input(FILE *fp);
 #endif
