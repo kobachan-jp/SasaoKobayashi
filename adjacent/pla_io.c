@@ -14,6 +14,7 @@ Cube* parse_cube_string(const char* cube_str, int n) {
         n_b <<= 1;
 
         char ch = cube_str[i];
+        printf("This ch is : %c\n",ch);
         switch (ch) {
             case '1': p |= 1ULL;   break;
             case '0': n_b |= 1ULL; break;
@@ -72,10 +73,60 @@ bool read_pla_file(const char* filename, Cube** list_10, Cube** list_01, int* in
             fscanf(fp, "%d", &num_outputs);
         } else if (strcmp(command, ".p") == 0) {
             fscanf(fp, "%d", &num_cubes);
-            break;
-        } else {
+
+        } else if (strcmp(command, ".type")==0){
             char skip[256];
-            fgets(skip, sizeof(skip), fp);
+            fscanf(fp, "%s", skip);
+        }else{
+            break;
+        }
+    }char line[512]; // 1行読み込み用のバッファ
+
+    // 💡 行単位でファイルを読み込みます
+    while (fgets(line, sizeof(line), fp) != NULL) {
+        
+        // 空行（改行だけ、スペースだけ）の行は飛ばす
+        if (line[0] == '\n' || line[0] == '\r') continue;
+
+        // 💡 1. 入力変数の数 (.i)
+        if (strncmp(line, ".i", 2) == 0) {
+            sscanf(line, ".i %d", &num_inputs);
+            continue;
+        } 
+        // 💡 2. 出力変数の数 (.o)
+        else if (strncmp(line, ".o", 2) == 0) {
+            sscanf(line, ".o %d", &num_outputs);
+            continue;
+        } 
+        // 💡 3. Cubeの行数 (.p)
+        else if (strncmp(line, ".p", 2) == 0) {
+            sscanf(line, ".p %d", &num_cubes);
+            continue; // 🔴 ここでも break せずに次へ進む！
+        } 
+        // 💡 4. その他のドットから始まる行 (.type fr など何でも)
+        else if (line[0] == '.') {
+            // ドットから始まる行は、1行まるごと無視して次の行へ！
+            continue; 
+        } 
+        
+        // 💡 5. ドットから始まらない行が来たら、それがCubeデータ（本文）の始まり！
+        else {
+            // ⚠️ 本文の行を fgets で吸い取ってしまったので、
+            // 次のCube読み込み処理が正常に動くように、ファイルの読み込み位置を
+            // いま読んだこの行の先頭（現在位置から line の長さ分だけ手前）に巻き戻します！
+            fseek(fp, -strlen(line), SEEK_CUR);
+         // 🔴【超重要】巻き戻した位置にある「前の行の改行コード」を完全に吸い取って、
+            // 次の fscanf が確実に "1011" の "1" から読めるように位置を強制補正します！
+            int c;
+            while ((c = fgetc(fp)) != EOF) {
+                if (c != ' ' && c != '\t' && c != '\r' && c != '\n') {
+                    // 最初の実データ（'1'）を見つけたら、その文字の直前にピンを戻して脱出！
+                    fseek(fp, -1, SEEK_CUR);
+                    break;
+                }
+            }
+            
+            break; // ヘッダー読み込みループを終了して、Cube読み込みへ進む
         }
     }
 
