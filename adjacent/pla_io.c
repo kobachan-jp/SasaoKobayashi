@@ -14,7 +14,6 @@ Cube* parse_cube_string(const char* cube_str, int n) {
         n_b <<= 1;
 
         char ch = cube_str[i];
-        printf("This ch is : %c\n",ch);
         switch (ch) {
             case '1': p |= 1ULL;   break;
             case '0': n_b |= 1ULL; break;
@@ -41,192 +40,57 @@ void append_to_list(Cube** head, Cube** tail, Cube* new_cube) {
     }
 }
 
-void print_cube_list(const char* list_name, const Cube* head) {
-    printf("\n--- List: %s ---\n", list_name);
-    const Cube* current = head;
-    int index = 1;
-    while (current != NULL) {
-        printf("  Cube %d: pos = 0x%016lx, neg = 0x%016lx\n", 
-               index++, current->pos_bits, current->neg_bits);
-        current = current->next;
+// 64ビットのデータを、0と1のビット文字列としてファイルに書き出す関数
+void fprintf_bits(FILE* fp, unsigned long bits, int input_number) {
+    // 最上位ビット（左端）から1ビットずつチェックして '0' か '1' を書き込む
+    for (int i = input_number-1; i >= 0; i--) {
+        int bit = (bits >> i) & 1;
+        fprintf(fp, "%d", bit);
     }
+    fprintf(fp, "\n");
 }
 
-bool read_pla_file(const char* filename, Cube** list_10, Cube** list_01, int* input_number) {
-    FILE* fp = fopen(filename, "r");
-    if (!fp) {
-        fprintf(stderr, "Error: Cannot open file '%s'\n", filename);
-        return false;
+void save_cube_list(const char* output_filename, Cube** cube_list, int input_number, bool n){
+    FILE *fp = fopen(output_filename,"w");
+    if(fp==NULL){
+        fprintf(stderr,"Cannot Open save_cube list output_file\n");
+        return;
     }
-
-    int num_inputs = 0;
-    int num_outputs = 0;
-    int num_cubes = 0;
-    Cube* tail_10 = NULL;
-    Cube* tail_01 = NULL;
-    char command[64];
-    
-    while (fscanf(fp, "%63s", command) != EOF) {
-        if (strcmp(command, ".i") == 0) {
-            fscanf(fp, "%d", &num_inputs);
-        } else if (strcmp(command, ".o") == 0) {
-            fscanf(fp, "%d", &num_outputs);
-        } else if (strcmp(command, ".p") == 0) {
-            fscanf(fp, "%d", &num_cubes);
-
-        } else if (strcmp(command, ".type")==0){
-            char skip[256];
-            fscanf(fp, "%s", skip);
+    Cube *head = *cube_list;
+    while(head != NULL){
+        if(n == true){
+        fprintf_bits(fp,head->pos_bits,input_number);
         }else{
-            break;
+        fprintf_bits(fp,head->neg_bits,input_number);
         }
-    }char line[512]; // 1行読み込み用のバッファ
-
-    // 💡 行単位でファイルを読み込みます
-    while (fgets(line, sizeof(line), fp) != NULL) {
-        
-        // 空行（改行だけ、スペースだけ）の行は飛ばす
-        if (line[0] == '\n' || line[0] == '\r') continue;
-
-        // 💡 1. 入力変数の数 (.i)
-        if (strncmp(line, ".i", 2) == 0) {
-            sscanf(line, ".i %d", &num_inputs);
-            continue;
-        } 
-        // 💡 2. 出力変数の数 (.o)
-        else if (strncmp(line, ".o", 2) == 0) {
-            sscanf(line, ".o %d", &num_outputs);
-            continue;
-        } 
-        // 💡 3. Cubeの行数 (.p)
-        else if (strncmp(line, ".p", 2) == 0) {
-            sscanf(line, ".p %d", &num_cubes);
-            continue; // 🔴 ここでも break せずに次へ進む！
-        } 
-        // 💡 4. その他のドットから始まる行 (.type fr など何でも)
-        else if (line[0] == '.') {
-            // ドットから始まる行は、1行まるごと無視して次の行へ！
-            continue; 
-        } 
-        
-        // 💡 5. ドットから始まらない行が来たら、それがCubeデータ（本文）の始まり！
-        else {
-            // ⚠️ 本文の行を fgets で吸い取ってしまったので、
-            // 次のCube読み込み処理が正常に動くように、ファイルの読み込み位置を
-            // いま読んだこの行の先頭（現在位置から line の長さ分だけ手前）に巻き戻します！
-            fseek(fp, -strlen(line), SEEK_CUR);
-         // 🔴【超重要】巻き戻した位置にある「前の行の改行コード」を完全に吸い取って、
-            // 次の fscanf が確実に "1011" の "1" から読めるように位置を強制補正します！
-            int c;
-            while ((c = fgetc(fp)) != EOF) {
-                if (c != ' ' && c != '\t' && c != '\r' && c != '\n') {
-                    // 最初の実データ（'1'）を見つけたら、その文字の直前にピンを戻して脱出！
-                    fseek(fp, -1, SEEK_CUR);
-                    break;
-                }
-            }
-            
-            break; // ヘッダー読み込みループを終了して、Cube読み込みへ進む
-        }
+        head = head -> next;
     }
-
-    *input_number = num_inputs;
-
-    if (num_inputs < 1 || num_inputs > 64) {
-        fprintf(stderr, "Error: Invalid number of inputs (%d).\n", num_inputs);
-        fclose(fp);
-        return false;
-    }
-
-    char input_part[128];
-    char output_part[128];
-
-    for (int i = 0; i < num_cubes; i++) {
-        if (fscanf(fp, "%127s %127s", input_part, output_part) != 2) {
-            fprintf(stderr, "Warning: Reached EOF early.\n");
-            break;
-        }
-
-        Cube* new_cube = parse_cube_string(input_part, num_inputs);
-        if (!new_cube) {
-            free_cube_list(*list_10);
-            free_cube_list(*list_01);
-            fclose(fp);
-            return false;
-        }
-
-        if (strcmp(output_part, "10") == 0) {
-            append_to_list(list_10, &tail_10, new_cube);
-        } else if (strcmp(output_part, "01") == 0) {
-            append_to_list(list_01, &tail_01, new_cube);
-        } else {
-            free_cube(new_cube);
-        }
-    }
-
-    if (fscanf(fp, "%63s", command) != EOF) {
-        // .e の確認など（必要に応じて）
-    }
-
+    fflush(fp);
+    rewind(fp);
     fclose(fp);
-    return true;
 }
 
-bool write_pla_file(const char* filename, int num_inputs, int num_outputs, const Cube* list_10, const Cube* list_01) {
-    FILE* fp = fopen(filename, "w");
-    if (!fp) {
-        fprintf(stderr, "Error: Cannot open file '%s' for writing.\n", filename);
-        return false;
+void make_cube_list(const char* filename, Cube** cube_list, int *input_num){
+    FILE *fp = fopen(filename,"r");
+    if(fp==NULL){
+        fprintf(stderr,"Cannot Open make_cube list input_file\n");
+        return;
     }
-
-    // ループ用のポインタ変数を、あらかじめ関数の先頭でしっかりと宣言します
-    const Cube* curr = NULL;
-    int i = 0;
-
-    // 1. まず項数（Cubeの個数）を合計する
-    int num_cubes = 0;
-    for (curr = list_10; curr != NULL; curr = curr->next) num_cubes++;
-    for (curr = list_01; curr != NULL; curr = curr->next) num_cubes++;
-
-    // 2. ヘッダー情報の書き込み
-    fprintf(fp, ".i %d\n", num_inputs);
-    fprintf(fp, ".o %d\n", num_outputs);
-    fprintf(fp, ".p %d\n", num_cubes);
-
-    // 3. 10のリストの書き込み
-    for (curr = list_10; curr != NULL; curr = curr->next) {
-        for (i = 0; i < num_inputs; i++) {
-            uint64_t mask = (1ULL << (num_inputs - 1 - i));
-            
-            // 外側で宣言した curr を使うので、絶対に「宣言されていない」エラーは起きません
-            bool has_pos = (curr->pos_bits & mask) != 0;
-            bool has_neg = (curr->neg_bits & mask) != 0;
-
-            if (has_pos && !has_neg)      fputc('1', fp);
-            else if (!has_pos && has_neg) fputc('0', fp);
-            else                          fputc('-', fp);
+    char line[256];
+    int input_number = 0;
+    int is_first_line = 1;
+    Cube *tail = NULL;
+    Cube *new_cube = NULL;
+    while(fgets(line,sizeof(line),fp) != NULL){
+        if(is_first_line){
+            input_number = strlen(line)-1;
+            (*input_num) = input_number;
+            is_first_line = 0;
+            printf("This input number is %d\n", input_number);
+            printf("-------------------------------------------\n");
         }
-        fprintf(fp, " 10\n");
+        new_cube = parse_cube_string(line,input_number);
+        append_to_list(cube_list, &tail, new_cube);
     }
-
-    // 4. 01のリストの書き込み
-    for (curr = list_01; curr != NULL; curr = curr->next) {
-        for (i = 0; i < num_inputs; i++) {
-            uint64_t mask = (1ULL << (num_inputs - 1 - i));
-            
-            bool has_pos = (curr->pos_bits & mask) != 0;
-            bool has_neg = (curr->neg_bits & mask) != 0;
-
-            if (has_pos && !has_neg)      fputc('1', fp);
-            else if (!has_pos && has_neg) fputc('0', fp);
-            else                          fputc('-', fp);
-        }
-        fprintf(fp, " 01\n");
-    }
-
-    // 5. フッターの書き込み
-    fprintf(fp, ".e\n");
-
     fclose(fp);
-    return true;
 }

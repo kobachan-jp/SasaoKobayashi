@@ -8,6 +8,6 @@
 Cube* parse_cube_string(const char* cube_str, int n);
 void append_to_list(Cube** head, Cube** tail, Cube* new_cube);
 void print_cube_list(const char* list_name, const Cube* head);
-bool read_pla_file(const char* filename, Cube** list_10, Cube** list_01, int* input_number);
-bool write_pla_file(const char* filename, int num_inputs, int num_outputs, const Cube* list_10, const Cube* list_01);
+void save_cube_list(const char* output_filename, Cube** cube_list, int input_number, bool n);
+void make_cube_list(const char* filename, Cube** cube_list, int *input_num);
 #endif 

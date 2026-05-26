@@ -21,54 +21,91 @@ uint64_t binary_to_uint64(char *s){
 Windowsのファイルをubuntuで実行できる.
 ubuntuのファイルはwindowsでは特に何もしなくても実行できる.
 */
-void trim_newline(const char* filename){
+const char* trim_newline(const char* filename){
 
     char line[256];
 
     FILE *fp = fopen(filename, "r");
+    FILE *out_fp = fopen("trim.txt", "w");
     if(fp == NULL){
-        fprintf(stderr,"Cannot Open the file.\n");
-        return;
+        fprintf(stderr,"Cannot Open the fp file.\n");
+        return NULL;
     }
+    if(out_fp == NULL){
+        fprintf(stderr,"Cannot Open the out_fp file.\n");
+        fclose(fp);
+        return NULL;
+    }
+
     while(fgets(line, sizeof(line),fp) != NULL){
 
         line[strcspn(line, "\r\n")] = '\0';
-        printf("%s\n",line);
+        fprintf(out_fp,"%s\n",line);
     }
 
     fclose(fp);
-    return;
+    fflush(out_fp);
+    rewind(out_fp);
+    fclose(out_fp);
+    return "trim.txt";
 }
 
-void skip_directives(FILE *fp){
+const char* skip_directives(const char* filename){
     char line[256];
 
+    FILE *fp = fopen(filename,"r");
     if(fp == NULL){
         fprintf(stderr,"Cannot Find Input\n");
-        return;
+        return NULL;
     }
 
+    FILE *out_fp = fopen("skip.txt", "w");
+    if(out_fp == NULL){
+        fprintf(stderr,"Cannot make skip output file\n");
+        return NULL;
+    }
     while (fgets(line, sizeof(line),fp) != NULL){
         if(line[0] == '.'){
             continue;
         }
-        printf("%s",line);
+        fprintf(out_fp,"%s",line);
     }
-    return;
+
+    fclose(fp);
+
+    fflush(out_fp);
+    rewind(out_fp);
+    fclose(out_fp);
+    return "skip.txt";
 }
 
-void extract_input(FILE *fp){
+void extract_input(const char* filename, char* output_number,const char* save_filename){
     
     char line[256];
     char input[256], output[256];
+    FILE *fp = fopen(filename,"r");
     if(fp == NULL){
-        fprintf(stderr, "Cannot Find Input.\n");
+        fprintf(stderr, "Cannot Find extra_input file.\n");
         return;
     }
+    FILE *out_fp = fopen(save_filename, "w");
+    if(out_fp == NULL){
+        fprintf(stderr, "Cannot make extra_input output file.\n");
+        return ;
+    }
+
     while(fgets(line,sizeof(line),fp) != NULL){
         if(sscanf(line, "%s %s", input, output)==2){
-            printf("%s\n",input);
+            if(strcmp(output,output_number)==0){
+                fprintf(out_fp,"%s\n",input);
+            }
         }
     }
+    rewind(fp);
+    fclose(fp);
+
+    fflush(out_fp);
+    rewind(out_fp);
+    fclose(out_fp);
     return;
 }
