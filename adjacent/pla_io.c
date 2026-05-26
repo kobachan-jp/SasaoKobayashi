@@ -14,7 +14,6 @@ Cube* parse_cube_string(const char* cube_str, int n) {
         n_b <<= 1;
 
         char ch = cube_str[i];
-        printf("This ch is : %c\n",ch);
         switch (ch) {
             case '1': p |= 1ULL;   break;
             case '0': n_b |= 1ULL; break;
@@ -44,7 +43,7 @@ void append_to_list(Cube** head, Cube** tail, Cube* new_cube) {
 // 64ビットのデータを、0と1のビット文字列としてファイルに書き出す関数
 void fprintf_bits(FILE* fp, unsigned long bits, int input_number) {
     // 最上位ビット（左端）から1ビットずつチェックして '0' か '1' を書き込む
-    for (int i = input_number; i >= 0; i--) {
+    for (int i = input_number-1; i >= 0; i--) {
         int bit = (bits >> i) & 1;
         fprintf(fp, "%d", bit);
     }
@@ -57,12 +56,12 @@ void save_cube_list(const char* output_filename, Cube** cube_list, int input_num
         fprintf(stderr,"Cannot Open save_cube list output_file\n");
         return;
     }
-    Cube *head = cube_list;
+    Cube *head = *cube_list;
     while(head != NULL){
         if(n == true){
         fprintf_bits(fp,head->pos_bits,input_number);
         }else{
-        fprintf(fp,head->neg_bits,input_number);
+        fprintf_bits(fp,head->neg_bits,input_number);
         }
         head = head -> next;
     }

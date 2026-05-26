@@ -32,20 +32,16 @@ int main(int argc, char *argv[]) {
         extract_input(skip_fp,"10","output_10.txt");
         //01の入力部のみ保存.
         extract_input(skip_fp,"01","output_01.txt");
-        //10と01のリストをbitに変換.
-        make_cube_list("output_10.txt",output_10_list,&input_num);
-        make_cube_list("output_01.txt",output_01_list,&input_num);
-        save_cube_list("cube_10_bit.txt",output_10_list,input_num,true);
-        save_cube_list("cube_01_bit.txt",output_01_list,input_num,false);
+        //10と01のリストをbitに変換(肯定と否定それぞれ分けて保存).
+        make_cube_list("output_10.txt",&output_10_list,&input_num);
+        make_cube_list("output_01.txt",&output_01_list,&input_num);
+        save_cube_list("cube_10_pos.txt",&output_10_list,input_num,true);
+        save_cube_list("cube_10_neg.txt",&output_10_list,input_num,false);
+        save_cube_list("cube_01_pos.txt",&output_01_list,input_num,true);
+        save_cube_list("cube_01_neg.txt",&output_01_list,input_num,false);
         return 0;
     }
 /*
-        print_cube_list("Output 10 Group", output_10_list);
-        print_cube_list("Output 01 Group", output_01_list);
-    }else{
-        printf("Cannot Read File\n");
-        exit(0);
-    }
 
     //3.制限を求める（9.4.1)
     Cube* uni = create_universe_cube();
