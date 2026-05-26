@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "cube_pool.h" 
 #include "filterfile.h"
-//#include "pla_io.h"    
+#include "pla_io.h"    
 //#include "cube_restrict.h"
 //#include "cube_complement.h"
 
@@ -32,7 +32,11 @@ int main(int argc, char *argv[]) {
         extract_input(skip_fp,"10","output_10.txt");
         //01の入力部のみ保存.
         extract_input(skip_fp,"01","output_01.txt");
-        //10と01のリストがきちんと読み込まれているか確認.
+        //10と01のリストをbitに変換.
+        make_cube_list("output_10.txt",output_10_list);
+        make_cube_list("output_01.txt",output_01_list);
+        save_cube_list("cube_10_bit.txt",output_10_list,true);
+        save_cube_list("cube_01_bit.txt",output_01_list,false);
         return 0;
     }
 /*

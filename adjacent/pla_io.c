@@ -52,6 +52,25 @@ void print_cube_list(const char* list_name, const Cube* head) {
     }
 }
 
+void save_cube_list(const char* output_filename, Cube** cube_list, bool n){
+    FILE *fp = fopen(output_filename,"w");
+    if(fp==NULL){
+        fprintf(stderr,"Cannot Open save_cube list output_file\n");
+        return;
+    }
+    Cube *head = cube_list;
+    while(head != NULL){
+        if(n == true){
+        fprintf(fp,"%016lx\n",head->pos_bits);
+        }else{
+        fprintf(fp,"%016lx\n",head->neg_bits);
+        }
+        head = head -> next;
+    }
+    fflush(fp);
+    rewind(fp);
+    fclose(fp);
+}
 
 void make_cube_list(const char* filename, Cube** cube_list){
     FILE *fp = fopen(filename,"r");
@@ -74,5 +93,5 @@ void make_cube_list(const char* filename, Cube** cube_list){
         new_cube = parse_cube_string(line,input_number);
         append_to_list(cube_list, &tail, new_cube);
     }
-    
+    fclose(fp);
 }
