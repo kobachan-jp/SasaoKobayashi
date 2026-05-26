@@ -41,18 +41,17 @@ void append_to_list(Cube** head, Cube** tail, Cube* new_cube) {
     }
 }
 
-void print_cube_list(const char* list_name, const Cube* head) {
-    printf("\n--- List: %s ---\n", list_name);
-    const Cube* current = head;
-    int index = 1;
-    while (current != NULL) {
-        printf("  Cube %d: pos = 0x%016lx, neg = 0x%016lx\n", 
-               index++, current->pos_bits, current->neg_bits);
-        current = current->next;
+// 64ビットのデータを、0と1のビット文字列としてファイルに書き出す関数
+void fprintf_bits(FILE* fp, unsigned long bits, int input_number) {
+    // 最上位ビット（左端）から1ビットずつチェックして '0' か '1' を書き込む
+    for (int i = input_number; i >= 0; i--) {
+        int bit = (bits >> i) & 1;
+        fprintf(fp, "%d", bit);
     }
+    fprintf(fp, "\n");
 }
 
-void save_cube_list(const char* output_filename, Cube** cube_list, bool n){
+void save_cube_list(const char* output_filename, Cube** cube_list, int input_number, bool n){
     FILE *fp = fopen(output_filename,"w");
     if(fp==NULL){
         fprintf(stderr,"Cannot Open save_cube list output_file\n");
@@ -61,9 +60,9 @@ void save_cube_list(const char* output_filename, Cube** cube_list, bool n){
     Cube *head = cube_list;
     while(head != NULL){
         if(n == true){
-        fprintf(fp,"%016lx\n",head->pos_bits);
+        fprintf_bits(fp,head->pos_bits,input_number);
         }else{
-        fprintf(fp,"%016lx\n",head->neg_bits);
+        fprintf(fp,head->neg_bits,input_number);
         }
         head = head -> next;
     }
@@ -72,7 +71,7 @@ void save_cube_list(const char* output_filename, Cube** cube_list, bool n){
     fclose(fp);
 }
 
-void make_cube_list(const char* filename, Cube** cube_list){
+void make_cube_list(const char* filename, Cube** cube_list, int *input_num){
     FILE *fp = fopen(filename,"r");
     if(fp==NULL){
         fprintf(stderr,"Cannot Open make_cube list input_file\n");
@@ -86,6 +85,7 @@ void make_cube_list(const char* filename, Cube** cube_list){
     while(fgets(line,sizeof(line),fp) != NULL){
         if(is_first_line){
             input_number = strlen(line)-1;
+            (*input_num) = input_number;
             is_first_line = 0;
             printf("This input number is %d\n", input_number);
             printf("-------------------------------------------\n");
