@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-void trim_newline(const char* filename);
-void skip_directives(FILE *fp);
-void extract_input(FILE *fp);
+const char* trim_newline(const char* filename);
+const char* skip_directives(const char* fp);
+void extract_input(const char* fp, char* output_number, const char* save_filename);
 #endif
