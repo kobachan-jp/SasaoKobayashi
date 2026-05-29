@@ -7,7 +7,7 @@
 
 Cube* parse_cube_string(const char* cube_str, int n);
 void append_to_list(Cube** head, Cube** tail, Cube* new_cube);
-void print_cube_list(const char* list_name, const Cube* head);
+void fprintf_bits(FILE* fp, unsigned long bits, int input_number);
 void save_cube_list(const char* output_filename, Cube** cube_list, int input_number, bool n);
 void make_cube_list(const char* filename, Cube** cube_list, int *input_num);
 #endif 

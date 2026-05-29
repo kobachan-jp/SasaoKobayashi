@@ -3,6 +3,7 @@
 #include "cube_restrict.h" // 自身のヘッダー
 #include "cube_pool.h"     // alloc_cube や free_cube_list を使うために必要
 
+//cube_listを複製
 Cube* duplicate_list(const Cube* head) {
     Cube* new_head = NULL;
     Cube* new_tail = NULL;
