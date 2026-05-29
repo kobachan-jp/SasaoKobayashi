@@ -5,6 +5,7 @@
 #include "cube_complement.h"
 #include "cube_restrict.h"
 #include "cube_pool.h"
+#include "pla_io.h"
 /*
 共通bitがあるcubeを探す
 */
@@ -108,17 +109,23 @@ int find_best_pivot_bit(const Cube* G, int n) {
 }
 
 //activeな列を1としたcubeを作成
-Cube create_active_on_bit(int n, int pivot){
+Cube* create_active_on_bit(int n, int pivot){
+    Cube* c1 = alloc_cube();
     uint64_t mask = (1ULL << (n - 1 - pivot));
-    Cube c1 = { .pos_bits = ~0ULL, .neg_bits = ~0ULL & ~mask, .next = NULL }; 
+    c1->pos_bits = ~0ULL;
+    c1 -> neg_bits = ~0ULL & ~mask;
+    c1 ->next = NULL; 
     return c1;
 }
 
 //activeな列を0としたcubeを作成
-Cube create_active_off_bit(int n, int pivot){
+Cube* create_active_off_bit(int n, int pivot){
 
     uint64_t mask = (1ULL << (n - 1 - pivot));
-    Cube c2 = { .pos_bits = ~0ULL & ~mask, .neg_bits = ~0ULL, .next = NULL }; 
+    Cube* c2 = alloc_cube();
+    c2 -> pos_bits = ~0ULL & ~mask;
+    c2 -> neg_bits = ~0ULL;
+    c2 -> next = NULL; 
 
     return c2;
 }
@@ -126,14 +133,18 @@ Cube create_active_off_bit(int n, int pivot){
 Cube* complement(Cube* G, int n){
     //ex.9.10.1
     int pivot = find_best_pivot_bit(G, n);
+    printf("best_pivot : %d\n",pivot);
     if(pivot == -1){
-        printf("cannot find best pivot\n");
-        exit(0);
+        return invert_single_cube(G,n);
     }
-    Cube c1 = create_active_on_bit(n, pivot);
-    Cube c2 = create_active_off_bit(n, pivot);
-    Cube* G1 = compute_restriction_optimized(G, &c1);
-    Cube* G2 = compute_restriction_optimized(G, &c2);
+    Cube* c1 = create_active_on_bit(n, pivot);
+    printf("active on bits\n");
+    fprintf_bits(stderr,c1->pos_bits,n);
+    Cube* c2 = create_active_off_bit(n, pivot);
+    printf("active off bits\n");
+    fprintf_bits(stderr,c2->pos_bits,n);
+    Cube* G1 = compute_restriction_optimized(G, c1);
+    Cube* G2 = compute_restriction_optimized(G, c2);
     //ex.9.10.2
     int n1 = count_cubes(G1);
     int n2 = count_cubes(G2);
@@ -142,17 +153,25 @@ Cube* complement(Cube* G, int n){
     //ここから再帰するぶぶんスタート
     if(n1 == 1){
         not_G1 = invert_single_cube(G1,n);
+        printf("Before NOT:\n");
+        fprintf_bits(stderr,G1->pos_bits,n);
+        printf("after NOT:\n");
+        fprintf_bits(stderr,not_G1->pos_bits,n);
     }else{
         not_G1 = complement(G1,n);
     }
     if(n2 == 1){
         not_G2 = invert_single_cube(G2,n);
+        printf("Before NOT:\n");
+        fprintf_bits(stderr,G2->pos_bits,n);
+        printf("after NOT:\n");
+        fprintf_bits(stderr,not_G2->pos_bits,n);
     }else{
         not_G2 = complement(G2,n);
     }
 
-    Cube* final_res1 = intersect_list_and_cube(not_G1, &c1);
-    Cube* final_res2 = intersect_list_and_cube(not_G2, &c2);
+    Cube* final_res1 = intersect_list_and_cube(not_G1, c1);
+    Cube* final_res2 = intersect_list_and_cube(not_G2, c2);
     
     free_cube_list(G1);
     free_cube_list(G2);
@@ -196,74 +215,5 @@ Cube* invert_single_cube(const Cube* c, int n) {
     return res_head;
 }
 
-Cube* compute_complement_rec(Cube* G, const Cube* c_accum, int n) {
-    if (G == NULL) {
-        Cube* res = alloc_cube();
-        if (res) { res->pos_bits = c_accum->pos_bits; res->neg_bits = c_accum->neg_bits; }
-        return res;
-    }
-    
-    if (G->next == NULL) {
-        Cube* G_not = invert_single_cube(G, n);
-        Cube* final_res_head = NULL;
-        Cube* final_res_tail = NULL;
-        Cube* curr = G_not;
-        
-        while (curr != NULL) {
-            Cube* intersected = intersect_two_cubes(c_accum, curr);
-            if (intersected) {
-                if (!final_res_head) { final_res_head = intersected; final_res_tail = intersected; }
-                else { final_res_tail->next = intersected; final_res_tail = intersected; }
-            }
-            curr = curr->next;
-        }
-        free_cube_list(G_not);
-        return final_res_head;
-    }
-    
-    int pivot = find_best_pivot_bit(G, n);
-    
-    if (pivot == -1) {
-        Cube* G_not = invert_single_cube(G, n);
-        Cube* final_res_head = NULL; Cube* final_res_tail = NULL; Cube* curr = G_not;
-        while (curr != NULL) {
-            Cube* intersected = intersect_two_cubes(c_accum, curr);
-            if (intersected) {
-                if (!final_res_head) { final_res_head = intersected; final_res_tail = intersected; }
-                else { final_res_tail->next = intersected; final_res_tail = intersected; }
-            }
-            curr = curr->next;
-        }
-        free_cube_list(G_not);
-        return final_res_head;
-    }
-    
-    
-    
-    Cube c1 = create_active_on_bit(n,pivot);
-    Cube c2 = create_active_off_bit(n,pivot);
-    
-    Cube* next_c1 = intersect_two_cubes(c_accum, &c1);
-    Cube* next_c2 = intersect_two_cubes(c_accum, &c2);
-    
-    // 💡 ここで cube_restrict の関数を呼び出します！
-    Cube* G1 = compute_restriction_optimized(G, NULL);
-    Cube* G2 = compute_restriction_optimized(G, NULL);
-    
-    Cube* res1 = NULL;
-    Cube* res2 = NULL;
-    if (next_c1) res1 = compute_complement_rec(G1, next_c1, n);
-    if (next_c2) res2 = compute_complement_rec(G2, next_c2, n);
-    
-    free_cube_list(G1);
-    free_cube_list(G2);
-    if (next_c1) free_cube(next_c1);
-    if (next_c2) free_cube(next_c2);
-    
-    return append_lists_destructive(res1, res2);
-}
 
-Cube* invert_logic_function(Cube* G, int n) {
-    Cube universe = { .pos_bits = ~0ULL, .neg_bits = ~0ULL, .next = NULL };
-    return compute_complement_rec(G, &universe, n);
-}
+
