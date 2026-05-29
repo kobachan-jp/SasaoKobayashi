@@ -3,7 +3,7 @@
 #include "filterfile.h"
 #include "pla_io.h"    
 #include "cube_restrict.h"
-//#include "cube_complement.h"
+#include "cube_complement.h"
 
 
 int main(int argc, char *argv[]) {
@@ -40,18 +40,21 @@ int main(int argc, char *argv[]) {
         save_cube_list("cube_01_pos.txt",&output_01_list,input_num,true);
         save_cube_list("cube_01_neg.txt",&output_01_list,input_num,false);
         //3.制限を求める（9.4.1)
-        Cube* uni = create_universe_cube();
+        //Cube* uni = create_universe_cube();
+        Cube* uni = NULL;
+        uni = parse_cube_string("---1",4);
         Cube* F_or_R = create_union_F_or_R(output_10_list,output_01_list);
         save_cube_list("F_or_R_pos.txt",&F_or_R,input_num,true);
         save_cube_list("F_or_R_neg.txt",&F_or_R,input_num,false);
-        return 0;
-    }
-    /*
         Cube* G = compute_restriction_optimized(F_or_R, uni);
-    //4.Gの否定を求める(9.4.2)
-    Cube* not_G = complement(G,input_num);
-    //5.c&not_Gをとる(9.4.3)
-    Cube* disjoint = intersect_list_and_cube(not_G,uni);
+        save_cube_list("G_pos.txt",&G,input_num,true);
+        save_cube_list("G_neg.txt",&G,input_num,false);
+        //4.Gの否定を求める(9.4.2)
+        Cube* not_G = complement(G,input_num);
+        save_cube_list("G_comp_pos.txt",&not_G,input_num,true);
+        //5.c&not_Gをとる(9.4.3)
+        Cube* disjoint = intersect_list_and_cube(not_G,uni);
+        save_cube_list("disjoint.txt",&disjoint,input_num,true);
     // 3. 後片付け
     free_cube_list(output_10_list);
     free_cube_list(output_01_list);
@@ -62,6 +65,11 @@ int main(int argc, char *argv[]) {
     free_cube_list(disjoint);  
 
     return 0;
+            }
+    /*
+        
+    
+    
 }
 
 */
