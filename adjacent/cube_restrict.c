@@ -69,14 +69,14 @@ Cube* compute_restriction_optimized(const Cube* F, const Cube* c) {
     const Cube* curr_F = F;
     
 
-    uint64_t not_uni_pos = ~c->pos_bits;
-    uint64_t not_uni_neg = ~c->neg_bits;
+    uint64_t not_uni_pos = ~(c->pos_bits);
+    uint64_t not_uni_neg = ~(c->neg_bits);
     
     while (curr_F != NULL) {
         uint64_t p = curr_F->pos_bits & c->pos_bits;
         uint64_t n_b = curr_F->neg_bits & c->neg_bits;
         
-        if ((~p & ~n_b) != 0ULL) {
+        if ((p | n_b) != ~0ULL) {
             curr_F = curr_F->next;
             continue; 
         }
