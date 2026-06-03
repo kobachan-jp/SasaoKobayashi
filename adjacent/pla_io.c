@@ -94,3 +94,61 @@ void make_cube_list(const char* filename, Cube** cube_list, int *input_num){
     }
     fclose(fp);
 }
+
+//cubeのposとnegを合体させて1,0,-で表示させる.
+void fprintf_cube_combined(FILE* stream, const Cube* c, int n) {
+    if (c == NULL) {
+        fprintf(stream, "(NULL)\n");
+        return;
+    }
+
+    for (int i = 0; i < n; i++) {
+        // 最上位ビット（左端）から順番に1ビットずつチェックしていくためのマスク
+        uint64_t mask = (1ULL << (n - 1 - i));
+        
+        int has_pos = (c->pos_bits & mask) != 0;
+        int has_neg = (c->neg_bits & mask) != 0;
+
+        if (has_pos && !has_neg) {
+            // pos=1, neg=0 のときは「1」
+            fprintf(stream, "1");
+        } else if (!has_pos && has_neg) {
+            // pos=0, neg=1 のときは「0」
+            fprintf(stream, "0");
+        } else if (has_pos && has_neg) {
+            // pos=1, neg=1 のときは「- (ドントケア)」
+            fprintf(stream, "-");
+        } else {
+            // pos=0, neg=0 のときは「矛盾（消滅）」
+            // 通常のキューブでは発生しませんが、デバッグ用に 'X' としています
+            fprintf(stream, "X");
+        }
+    }
+    // キューブの終わりに改行を入れる
+    fprintf(stream, "\n");
+}
+
+/**
+ * Cubeのリスト（集合）全体をまとめてファイルに出力する関数
+ */
+void fprintf_cube_list_combined(const char *stream, const Cube* head, int n) {
+
+    FILE *fp = fopen(stream,"w");
+    if(fp == NULL){
+        fprintf(stderr,"Cannot Open combined_cube_list file.\n");
+        return;
+    }
+    const Cube* curr = head;
+    if (curr == NULL) {
+        fprintf(fp, "(Empty List)\n");
+        return;
+    }
+    while (curr != NULL) {
+        fprintf_cube_combined(fp, curr, n);
+        curr = curr->next;
+    }
+
+    fflush(fp);
+    fclose(fp);
+ 
+}
