@@ -28,6 +28,7 @@ int main(int argc, char *argv[]) {
             return 0;
         }
         make_cube_list(clean_fp,&F_list,&input_num);
+        fprintf_cube_list_combined("F_list.txt",F_list, input_num);
         //3.制限を求める（9.4.1)
         Cube* H_list = NULL;
         const char *filename2 = argv[2];
@@ -43,20 +44,35 @@ int main(int argc, char *argv[]) {
             return 0;
         }
         make_cube_list(clean_fp2,&H_list,&input_num);
-        Cube* G = compute_restriction_optimized(F_list,H_list);
-        fprintf_cube_list_combined("restrict_F&H.txt",G,input_num);
-        //制限まで確認完了
-        //4.Gの否定を求める(9.4.2)
-        Cube* not_G = complement(G,input_num);
-        //5.c&not_Gをとる(9.4.3)
-        Cube* disjoint = intersect_list_and_cube(not_G,H_list);
-        fprintf_cube_list_combined("disjoint_H&F.txt",disjoint,input_num);
+        fprintf_cube_list_combined("H_list.txt",H_list, input_num);
+        Cube* sum = NULL;
+
+for (Cube* h = H_list; h != NULL; h = h->next) {
+    
+    Cube* G = compute_restriction_optimized(F_list, h);
+
+    Cube* not_G = complement(G, input_num);
+
+    Cube* disjoint = intersect_list_and_cube(not_G, h);
+
+    sum = append_lists_destructive(sum, disjoint);
+
+    free_cube_list(G);
+    free_cube_list(not_G);
+    /* disjoint は sum に連結したので解放しない */
+}
+
+fprintf_cube_list_combined("disjoint_H&F.txt", sum, input_num);
+
+/* 後片付け */
+free_cube_list(F_list);
+free_cube_list(H_list);
+free_cube_list(sum);
+fprintf_cube_list_combined("disjoint_H&F.txt",sum,input_num);
     // 3. 後片付け
     free_cube_list(F_list);
     free_cube_list(H_list);
-    free_cube_list(G);         
-    free_cube_list(not_G);     
-    free_cube_list(disjoint);  
+    free_cube_list(sum);  
 
     return 0;
             }

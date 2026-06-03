@@ -10,6 +10,9 @@
 共通bitがあるcubeを探す
 */
 Cube* intersect_two_cubes(const Cube* a, const Cube* b) {
+    if(a == NULL | b == NULL){
+        return NULL;
+    }
     uint64_t p = a->pos_bits & b->pos_bits;
     uint64_t n_b = a->neg_bits & b->neg_bits;
     
@@ -75,7 +78,7 @@ Cube* intersect_list_and_cube(const Cube* F, const Cube* c) {
 
 //activeなbit探し
 int find_best_pivot_bit(const Cube* G, int n) {
-    if (!G) return -1;
+    if (G==NULL) return -1;
     
     int best_bit = -1;
     int min_difference = 999999;
@@ -135,7 +138,7 @@ Cube* complement(Cube* G, int n){
     int pivot = find_best_pivot_bit(G, n);
     printf("best_pivot : %d\n",pivot);
     if(pivot == -1){
-        return invert_single_cube(G,n);
+        return NULL;
     }
     Cube* c1 = create_active_on_bit(n, pivot);
     printf("active on bits\n");
@@ -195,6 +198,9 @@ Cube* invert_single_cube(const Cube* c, int n) {
     Cube* res_head = NULL;
     Cube* res_tail = NULL;
 
+    if(c == NULL){
+        return NULL;
+    }
     if((c->pos_bits & c->neg_bits) == ~0ULL){
         return NULL;
     }

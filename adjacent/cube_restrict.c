@@ -99,16 +99,6 @@ Cube* compute_restriction_optimized(const Cube* F, const Cube* c) {
                 G_tail = res_cube;
             }
         }
-        fprintf(stderr,"-----\n");
-        fprintf(stderr,"Gのcube:\n");
-        fprintf_bits(stderr,curr_F->pos_bits,5);
-        fprintf_bits(stderr,curr_F->neg_bits,5);
-        fprintf(stderr,"cube c :\n");
-        fprintf_bits(stderr,c->pos_bits,5);
-        fprintf_bits(stderr,c->neg_bits,5);
-        fprintf(stderr,"制限後\n");
-        fprintf_bits(stderr,res_cube->pos_bits,5);
-        fprintf_bits(stderr,res_cube->neg_bits,5);
         curr_F = curr_F->next;
     }
     

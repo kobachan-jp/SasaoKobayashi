@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
     free_cube_list(G);         
     free_cube_list(not_G);     
     free_cube_list(disjoint);  
-
+    printf("completed\n");
     return 0;
             }
     /*
