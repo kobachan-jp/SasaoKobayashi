@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include "cube_restrict.h" // 自身のヘッダー
 #include "cube_pool.h"     // alloc_cube や free_cube_list を使うために必要
+#include "pla_io.h"
 
 //cube_listを複製
 Cube* duplicate_list(const Cube* head) {
@@ -98,7 +99,16 @@ Cube* compute_restriction_optimized(const Cube* F, const Cube* c) {
                 G_tail = res_cube;
             }
         }
-        
+        fprintf(stderr,"-----\n");
+        fprintf(stderr,"Gのcube:\n");
+        fprintf_bits(stderr,curr_F->pos_bits,5);
+        fprintf_bits(stderr,curr_F->neg_bits,5);
+        fprintf(stderr,"cube c :\n");
+        fprintf_bits(stderr,c->pos_bits,5);
+        fprintf_bits(stderr,c->neg_bits,5);
+        fprintf(stderr,"制限後\n");
+        fprintf_bits(stderr,res_cube->pos_bits,5);
+        fprintf_bits(stderr,res_cube->neg_bits,5);
         curr_F = curr_F->next;
     }
     

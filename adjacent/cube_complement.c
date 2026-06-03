@@ -47,7 +47,7 @@ Cube* intersect_list_and_cube(const Cube* F, const Cube* c) {
         uint64_t n_b = curr_F->neg_bits & c->neg_bits;
 
         // 💡 2. 矛盾チェック（posもnegも0のビットがあれば、ANDをとると消滅する）
-        if ((~p & ~n_b) != 0ULL) {
+        if ((p | n_b) != ~0ULL) {
             curr_F = curr_F->next;
             continue; // 矛盾した項は飛ばす（リストに入れない）
         }
@@ -153,19 +153,24 @@ Cube* complement(Cube* G, int n){
     //ここから再帰するぶぶんスタート
     if(n1 == 1){
         not_G1 = invert_single_cube(G1,n);
-        printf("Before NOT:\n");
+        printf("Before NOT_G1:\n");
         fprintf_bits(stderr,G1->pos_bits,n);
-        printf("after NOT:\n");
-        fprintf_bits(stderr,not_G1->pos_bits,n);
+        fprintf_bits(stderr,G1->neg_bits,n);
+        if(not_G1 != NULL){
+            printf("after NOT:\n");
+            fprintf_bits(stderr,not_G1->pos_bits,n);
+        }
     }else{
         not_G1 = complement(G1,n);
     }
     if(n2 == 1){
         not_G2 = invert_single_cube(G2,n);
-        printf("Before NOT:\n");
+        printf("Before NOT_G2:\n");
         fprintf_bits(stderr,G2->pos_bits,n);
+        if(not_G2 != NULL){
         printf("after NOT:\n");
         fprintf_bits(stderr,not_G2->pos_bits,n);
+        }
     }else{
         not_G2 = complement(G2,n);
     }
@@ -177,6 +182,8 @@ Cube* complement(Cube* G, int n){
     free_cube_list(G2);
     free_cube_list(not_G1);
     free_cube_list(not_G2);
+    free_cube(c1);
+    free_cube(c2);
     
     return append_lists_destructive(final_res1, final_res2);
 }
@@ -187,6 +194,10 @@ Cube* complement(Cube* G, int n){
 Cube* invert_single_cube(const Cube* c, int n) {
     Cube* res_head = NULL;
     Cube* res_tail = NULL;
+
+    if((c->pos_bits & c->neg_bits) == ~0ULL){
+        return NULL;
+    }
     
     // 【重要】これまでに確定した「元の文字の条件」を蓄積していくためのマスク
     // 最初はすべてドントケア（pos=1, neg=1）にしておく
