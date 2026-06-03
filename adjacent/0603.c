@@ -10,8 +10,7 @@ int main(int argc, char *argv[]) {
     // 1. リスト初期化
     init_cube_pool();
 
-    Cube* output_10_list = NULL;
-    Cube* output_01_list = NULL;
+    Cube* F_list = NULL;
     const char* filename = argv[1];
     int input_num = 0;
 
@@ -28,30 +27,33 @@ int main(int argc, char *argv[]) {
             fprintf(stderr,"Cannot complete skip_directives\n");
             return 0;
         }
-        //10の入力部のみ保存.
-        extract_input(skip_fp,"10","output_10.txt");
-        //01の入力部のみ保存.
-        extract_input(skip_fp,"01","output_01.txt");
-        //10と01のリストをbitに変換(肯定と否定それぞれ分けて保存).
-        make_cube_list("output_10.txt",&output_10_list,&input_num);
-        make_cube_list("output_01.txt",&output_01_list,&input_num);
+        make_cube_list(clean_fp,&F_list,&input_num);
         //3.制限を求める（9.4.1)
-        Cube* uni = create_universe_cube();
-        //Cube* uni = NULL;
-        //uni = parse_cube_string("---1",4);
-        Cube* F_or_R = create_union_F_or_R(output_10_list,output_01_list);
-        Cube* G = compute_restriction_optimized(F_or_R, uni);
+        Cube* H_list = NULL;
+        const char *filename2 = argv[2];
+         const char *clean_fp2 = trim_newline(filename2);
+        if(clean_fp2 == NULL){
+            fprintf(stderr,"Cannot complete trim_newline\n");
+            return 0;
+        }
+        //.iとかいらないやつを飛ばして保存.
+        const char *skip_fp2 = skip_directives(clean_fp2);
+        if(skip_fp2 == NULL){
+            fprintf(stderr,"Cannot complete skip_directives\n");
+            return 0;
+        }
+        make_cube_list(clean_fp2,&H_list,&input_num);
+        Cube* G = compute_restriction_optimized(F_list,H_list);
+        fprintf_cube_list_combined("restrict_F&H.txt",G,input_num);
         //制限まで確認完了
         //4.Gの否定を求める(9.4.2)
         Cube* not_G = complement(G,input_num);
         //5.c&not_Gをとる(9.4.3)
-        Cube* disjoint = intersect_list_and_cube(not_G,uni);
-        fprintf_cube_list_combined("disjoint_U&G.txt",disjoint,input_num);
+        Cube* disjoint = intersect_list_and_cube(not_G,H_list);
+        fprintf_cube_list_combined("disjoint_H&F.txt",disjoint,input_num);
     // 3. 後片付け
-    free_cube_list(output_10_list);
-    free_cube_list(output_01_list);
-
-    free_cube_list(uni);       
+    free_cube_list(F_list);
+    free_cube_list(H_list);
     free_cube_list(G);         
     free_cube_list(not_G);     
     free_cube_list(disjoint);  
