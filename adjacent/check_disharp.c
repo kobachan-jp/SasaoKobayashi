@@ -47,14 +47,19 @@ int main(int argc, char *argv[]) {
         fprintf_cube_list_combined("H_list.txt",H_list, input_num);
         Cube* sum = NULL;
 
+        int idx = 0;
 for (Cube* h = H_list; h != NULL; h = h->next) {
-    
+    printf("\n===== H[%d] =====\n", idx);
+    printf("h:\n");
+    fprintf_bits(stderr, h->pos_bits, input_num);
+    fprintf_bits(stderr, h->neg_bits, input_num);
     Cube* G = compute_restriction_optimized(F_list, h);
-
+    printf("F count=%d\n", count_cubes(F_list));
+     printf("G count = %d\n", count_cubes(G));
     Cube* not_G = complement(G, input_num);
-
+  printf("not_G count = %d\n", count_cubes(not_G));     
     Cube* disjoint = intersect_list_and_cube(not_G, h);
-
+printf("disjoint count = %d\n", count_cubes(disjoint));
     sum = append_lists_destructive(sum, disjoint);
 
     free_cube_list(G);

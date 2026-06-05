@@ -135,10 +135,11 @@ Cube* create_active_off_bit(int n, int pivot){
 
 Cube* complement(Cube* G, int n){
     //ex.9.10.1
+    printf("ENTER complement count=%d\n", count_cubes(G));
     int pivot = find_best_pivot_bit(G, n);
     printf("best_pivot : %d\n",pivot);
     if(pivot == -1){
-        return NULL;
+        return invert_single_cube(G,n);
     }
     Cube* c1 = create_active_on_bit(n, pivot);
     printf("active on bits\n");

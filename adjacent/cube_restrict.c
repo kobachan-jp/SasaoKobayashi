@@ -68,16 +68,37 @@ Cube* compute_restriction_optimized(const Cube* F, const Cube* c) {
     Cube* G_head = NULL;
     Cube* G_tail = NULL;
     const Cube* curr_F = F;
-    
+    int n=5;
 
     uint64_t not_uni_pos = ~(c->pos_bits);
     uint64_t not_uni_neg = ~(c->neg_bits);
     
+    
     while (curr_F != NULL) {
+        printf("\n--- restriction ---\n");
+
+    fprintf_bits(stderr,curr_F->pos_bits,n);
+    fprintf_bits(stderr,curr_F->neg_bits,n);
+
+    printf("with\n");
+
+    fprintf_bits(stderr,c->pos_bits,n);
+    fprintf_bits(stderr,c->neg_bits,n);
         uint64_t p = curr_F->pos_bits & c->pos_bits;
         uint64_t n_b = curr_F->neg_bits & c->neg_bits;
+        printf("p=");
+    fprintf_bits(stderr,p,n);
+
+    printf("n=");
+    fprintf_bits(stderr,n_b,n);
+
+    printf("or=");
+    fprintf_bits(stderr,p|n_b,n);
+
+printf("cmp=%d\n", ((p|n_b) == ~0ULL));
         
         if ((p | n_b) != ~0ULL) {
+            printf("judge=%llx\n",(unsigned long long)(p|n_b));
             curr_F = curr_F->next;
             continue; 
         }
@@ -99,6 +120,11 @@ Cube* compute_restriction_optimized(const Cube* F, const Cube* c) {
                 G_tail = res_cube;
             }
         }
+        printf("result\n");
+fprintf_bits(stderr,p,n);
+fprintf_bits(stderr,n_b,n);
+
+
         curr_F = curr_F->next;
     }
     

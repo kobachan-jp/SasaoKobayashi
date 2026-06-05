@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
         Cube* disjoint = intersect_list_and_cube(not_G,uni);
         save_cube_list("disjoint_pos.txt",&disjoint,input_num,true);
         save_cube_list("disjoint_neg.txt",&disjoint,input_num,false);
-        fprintf_cube_list_combined("disjoint.txt",disjoint,input_num);
+        fprintf_cube_list_combined("disjointH.txt",disjoint,input_num);
     // 3. 後片付け
     
 
