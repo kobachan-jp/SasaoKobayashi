@@ -135,17 +135,18 @@ Cube* create_active_off_bit(int n, int pivot){
 
 Cube* complement(Cube* G, int n){
     //ex.9.10.1
-    printf("ENTER complement count=%d\n", count_cubes(G));
+//    fprintf(stderr,"ENTER complement count=%d\n", count_cubes(G));
+//    fprintf(stderr,"G ptr=%p\n", (void*)G);
     int pivot = find_best_pivot_bit(G, n);
-    printf("best_pivot : %d\n",pivot);
+//    fprintf(stderr,"best_pivot : %d\n",pivot);
     if(pivot == -1){
         return invert_single_cube(G,n);
     }
     Cube* c1 = create_active_on_bit(n, pivot);
-    printf("active on bits\n");
+  fprintf(stderr,"active on bits\n");
     fprintf_bits(stderr,c1->pos_bits,n);
     Cube* c2 = create_active_off_bit(n, pivot);
-    printf("active off bits\n");
+    fprintf(stderr,"active off bits\n");
     fprintf_bits(stderr,c2->pos_bits,n);
     Cube* G1 = compute_restriction_optimized(G, c1);
     Cube* G2 = compute_restriction_optimized(G, c2);
@@ -157,11 +158,11 @@ Cube* complement(Cube* G, int n){
     //ここから再帰するぶぶんスタート
     if(n1 == 1){
         not_G1 = invert_single_cube(G1,n);
-        printf("Before NOT_G1:\n");
+        fprintf(stderr,"Before NOT_G1:\n");
         fprintf_bits(stderr,G1->pos_bits,n);
         fprintf_bits(stderr,G1->neg_bits,n);
         if(not_G1 != NULL){
-            printf("after NOT:\n");
+            fprintf(stderr,"after NOT:\n");
             fprintf_bits(stderr,not_G1->pos_bits,n);
         }
     }else{
@@ -169,10 +170,10 @@ Cube* complement(Cube* G, int n){
     }
     if(n2 == 1){
         not_G2 = invert_single_cube(G2,n);
-        printf("Before NOT_G2:\n");
+        fprintf(stderr,"Before NOT_G2:\n");
         fprintf_bits(stderr,G2->pos_bits,n);
         if(not_G2 != NULL){
-        printf("after NOT:\n");
+        fprintf(stderr,"after NOT:\n");
         fprintf_bits(stderr,not_G2->pos_bits,n);
         }
     }else{

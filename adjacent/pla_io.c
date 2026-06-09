@@ -74,6 +74,7 @@ void make_cube_list(const char* filename, Cube** cube_list, int *input_num){
     FILE *fp = fopen(filename,"r");
     if(fp==NULL){
         fprintf(stderr,"Cannot Open make_cube list input_file\n");
+         fclose(fp);
         return;
     }
     char line[256];
@@ -141,6 +142,7 @@ void fprintf_cube_list_combined(const char *stream, const Cube* head, int n) {
     const Cube* curr = head;
     if (curr == NULL) {
         fprintf(fp, "(Empty List)\n");
+        fclose(fp);
         return;
     }
     while (curr != NULL) {

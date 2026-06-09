@@ -49,36 +49,46 @@ int main(int argc, char *argv[]) {
 
         int idx = 0;
 for (Cube* h = H_list; h != NULL; h = h->next) {
+/*    
     printf("\n===== H[%d] =====\n", idx);
+    printf("h=%p next=%p\n",
+       (void*)h,
+       (void*)h->next);
+
+printf("pos=%llx neg=%llx\n",
+       (unsigned long long)h->pos_bits,
+       (unsigned long long)h->neg_bits);
     printf("h:\n");
     fprintf_bits(stderr, h->pos_bits, input_num);
     fprintf_bits(stderr, h->neg_bits, input_num);
+*/
     Cube* G = compute_restriction_optimized(F_list, h);
-    printf("F count=%d\n", count_cubes(F_list));
-     printf("G count = %d\n", count_cubes(G));
+//    printf("F count=%d\n", count_cubes(F_list));
+//     printf("G count = %d\n", count_cubes(G));
     Cube* not_G = complement(G, input_num);
-  printf("not_G count = %d\n", count_cubes(not_G));     
+//  printf("not_G count = %d\n", count_cubes(not_G));     
     Cube* disjoint = intersect_list_and_cube(not_G, h);
-printf("disjoint count = %d\n", count_cubes(disjoint));
+//printf("disjoint count = %d\n", count_cubes(disjoint));
     sum = append_lists_destructive(sum, disjoint);
 
     free_cube_list(G);
     free_cube_list(not_G);
     /* disjoint は sum に連結したので解放しない */
+    idx++;
+    printf("FOR LOOP END\n");
+
 }
 
-fprintf_cube_list_combined("disjoint_H&F.txt", sum, input_num);
+//fprintf(stderr,"BEFORE WRITE\n");
+fprintf_cube_list_combined("disjoint_H&G.txt", sum, input_num);
+//fprintf(stderr,"AFTER WRITE\n");
 
 /* 後片付け */
+//fprintf(stderr,"BEFORE FREE\n");
 free_cube_list(F_list);
 free_cube_list(H_list);
 free_cube_list(sum);
-fprintf_cube_list_combined("disjoint_H&F.txt",sum,input_num);
-    // 3. 後片付け
-    free_cube_list(F_list);
-    free_cube_list(H_list);
-    free_cube_list(sum);  
-
+//fprintf(stderr,"AFTER FREE\n");
     return 0;
             }
     /*
