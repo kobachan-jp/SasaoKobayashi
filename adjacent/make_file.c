@@ -44,8 +44,6 @@ int main(int argc, char *argv[]) {
         //Cube* uni = NULL;
         //uni = parse_cube_string("---1",4);
         Cube* F_or_R = create_union_F_or_R(output_10_list,output_01_list);
-        free_cube_list(output_10_list);
-        free_cube_list(output_01_list);
         save_cube_list("F_or_R_pos.txt",&F_or_R,input_num,true);
         save_cube_list("F_or_R_neg.txt",&F_or_R,input_num,false);
         Cube* G = compute_restriction_optimized(F_or_R, uni);
@@ -59,15 +57,15 @@ int main(int argc, char *argv[]) {
         Cube* disjoint = intersect_list_and_cube(not_G,uni);
         save_cube_list("disjoint_pos.txt",&disjoint,input_num,true);
         save_cube_list("disjoint_neg.txt",&disjoint,input_num,false);
-        fprintf_cube_list_combined("disjointH.txt",disjoint,input_num);
     // 3. 後片付け
-    
+    free_cube_list(output_10_list);
+    free_cube_list(output_01_list);
 
     free_cube_list(uni);       
     free_cube_list(G);         
     free_cube_list(not_G);     
     free_cube_list(disjoint);  
-    printf("completed\n");
+
     return 0;
             }
     /*

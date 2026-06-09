@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define MAX_CUBES 100000
+#define MAX_CUBES 1000000
 
 typedef struct Cube {
     uint64_t pos_bits;     
