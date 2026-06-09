@@ -47,21 +47,7 @@ int main(int argc, char *argv[]) {
         fprintf_cube_list_combined("H_list.txt",H_list, input_num);
         Cube* sum = NULL;
 
-        int idx = 0;
 for (Cube* h = H_list; h != NULL; h = h->next) {
-/*    
-    printf("\n===== H[%d] =====\n", idx);
-    printf("h=%p next=%p\n",
-       (void*)h,
-       (void*)h->next);
-
-printf("pos=%llx neg=%llx\n",
-       (unsigned long long)h->pos_bits,
-       (unsigned long long)h->neg_bits);
-    printf("h:\n");
-    fprintf_bits(stderr, h->pos_bits, input_num);
-    fprintf_bits(stderr, h->neg_bits, input_num);
-*/
     Cube* G = compute_restriction_optimized(F_list, h);
 //    printf("F count=%d\n", count_cubes(F_list));
 //     printf("G count = %d\n", count_cubes(G));
@@ -74,8 +60,6 @@ printf("pos=%llx neg=%llx\n",
     free_cube_list(G);
     free_cube_list(not_G);
     /* disjoint は sum に連結したので解放しない */
-    idx++;
-    printf("FOR LOOP END\n");
 
 }
 
