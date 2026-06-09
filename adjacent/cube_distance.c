@@ -7,13 +7,12 @@
 /*Cube同士の距離を測る*/
 int check_distance(Cube* a, Cube* b){
     if(a == NULL || b == NULL){
-            return NULL;
+            return -1;
         }
     uint64_t pos = a -> pos_bits & b -> pos_bits;
     uint64_t neg = a -> neg_bits & b -> neg_bits;
 
     int distance = __builtin_popcountll(~(pos | neg));
-
     return distance;
 }
 /*Cubeリスト同士でGの中でＦのcubeとの距離が1のCubeのリストを作成*/
@@ -25,9 +24,14 @@ Cube* make_distance1_CubeList(Cube* F, Cube* G){
 
     Cube* head = NULL;
     Cube* tail = NULL;
-    for(Cube* a = F; a -> next != NULL; a = a->next){
-        for (Cube* b = G; b -> next != NULL; b = b -> next)
-        {   int count = check_distance(a,b);
+    
+        for (Cube* b = G; b != NULL; b = b -> next){
+            for(Cube* a = F; a != NULL; a = a->next){
+            int count = check_distance(a,b);
+            
+            if(count == -1){
+                return NULL;
+            }
             if(count != 1){
                 continue;
             }
@@ -45,6 +49,7 @@ Cube* make_distance1_CubeList(Cube* F, Cube* G){
                 tail = new_cube;
             }
         }
+        break;
         }
         
     }
