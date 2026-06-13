@@ -87,8 +87,6 @@ void make_cube_list(const char* filename, Cube** cube_list, int *input_num){
             input_number = strlen(line)-1;
             (*input_num) = input_number;
             is_first_line = 0;
-            printf("This input number is %d\n", input_number);
-            printf("-------------------------------------------\n");
         }
         new_cube = parse_cube_string(line,input_number);
         append_to_list(cube_list, &tail, new_cube);
@@ -97,7 +95,7 @@ void make_cube_list(const char* filename, Cube** cube_list, int *input_num){
 }
 
 //cubeのposとnegを合体させて1,0,-で表示させる.
-void fprintf_cube_combined(FILE* stream, const Cube* c, int n) {
+void fprintf_cube_combined(FILE* stream, const Cube* c, int n, const char* output) {
     if (c == NULL) {
         fprintf(stream, "(NULL)\n");
         return;
@@ -124,15 +122,19 @@ void fprintf_cube_combined(FILE* stream, const Cube* c, int n) {
             // 通常のキューブでは発生しませんが、デバッグ用に 'X' としています
             fprintf(stream, "X");
         }
-    }
+    } 
     // キューブの終わりに改行を入れる
+    if(output != NULL && output[0] != '\0'){
+        fprintf(stream, " %s\n", output);
+    } else { 
     fprintf(stream, "\n");
+    }
 }
 
 /**
  * Cubeのリスト（集合）全体をまとめてファイルに出力する関数
  */
-void fprintf_cube_list_combined(const char *stream, const Cube* head, int n) {
+void fprintf_cube_list_combined(const char *stream, const Cube* head, int n, const char* output) {
 
     FILE *fp = fopen(stream,"w");
     if(fp == NULL){
@@ -146,7 +148,7 @@ void fprintf_cube_list_combined(const char *stream, const Cube* head, int n) {
         return;
     }
     while (curr != NULL) {
-        fprintf_cube_combined(fp, curr, n);
+        fprintf_cube_combined(fp, curr, n, output);
         curr = curr->next;
     }
 
