@@ -27,8 +27,8 @@ int main(int argc, char *argv[]) {
             fprintf(stderr,"Cannot complete skip_directives\n");
             return 0;
         }
-        make_cube_list(clean_fp,&F_list,&input_num);
-        fprintf_cube_list_combined("F_list.txt",F_list, input_num);
+        make_cube_list(skip_fp,&F_list,&input_num);
+        fprintf_cube_list_combined("F_list.txt",F_list, input_num,"");
         //3.制限を求める（9.4.1)
         Cube* H_list = NULL;
         const char *filename2 = argv[2];
@@ -43,8 +43,8 @@ int main(int argc, char *argv[]) {
             fprintf(stderr,"Cannot complete skip_directives\n");
             return 0;
         }
-        make_cube_list(clean_fp2,&H_list,&input_num);
-        fprintf_cube_list_combined("H_list.txt",H_list, input_num);
+        make_cube_list(skip_fp2,&H_list,&input_num);
+        fprintf_cube_list_combined("H_list.txt",H_list, input_num, "");
         Cube* sum = NULL;
 
 for (Cube* h = H_list; h != NULL; h = h->next) {
@@ -64,7 +64,7 @@ for (Cube* h = H_list; h != NULL; h = h->next) {
 }
 
 //fprintf(stderr,"BEFORE WRITE\n");
-fprintf_cube_list_combined("disjoint_H&G.txt", sum, input_num);
+fprintf_cube_list_combined("disjoint_H&G.txt", sum, input_num,"");
 //fprintf(stderr,"AFTER WRITE\n");
 
 /* 後片付け */
