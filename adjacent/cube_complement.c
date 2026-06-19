@@ -6,11 +6,14 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 /*
 共通bitがあるcubeを探す
 */
-Cube *intersect_two_cubes(const Cube *a, const Cube *b) {
-  if (a == NULL | b == NULL) {
+Cube *intersect_two_cubes(const Cube *a, const Cube *b)
+{
+  if (a == NULL | b == NULL)
+  {
     return NULL;
   }
   uint64_t p = a->pos_bits & b->pos_bits;
@@ -27,7 +30,8 @@ Cube *intersect_two_cubes(const Cube *a, const Cube *b) {
   return res;
 }
 // ただcubeセットをくっつけているだけ
-Cube *append_lists_destructive(Cube *list1, Cube *list2) {
+Cube *append_lists_destructive(Cube *list1, Cube *list2)
+{
   if (!list1)
     return list2;
   if (!list2)
@@ -43,7 +47,8 @@ Cube *append_lists_destructive(Cube *list1, Cube *list2) {
  * 集合F（Cubeのリスト）と、1つのCube c
  * のAND（積集合）を計算し、新しいリストを返す
  */
-Cube *intersect_list_and_cube(const Cube *F, const Cube *c) {
+Cube *intersect_list_and_cube(const Cube *F, const Cube *c)
+{
   if (F == NULL || c == NULL)
     return NULL;
 
@@ -51,28 +56,34 @@ Cube *intersect_list_and_cube(const Cube *F, const Cube *c) {
   Cube *res_tail = NULL;
   const Cube *curr_F = F;
 
-  while (curr_F != NULL) {
+  while (curr_F != NULL)
+  {
     // 💡 1. 集合Fの今の項と、Cube c のAND（ビット演算）をとる
     uint64_t p = curr_F->pos_bits & c->pos_bits;
     uint64_t n_b = curr_F->neg_bits & c->neg_bits;
 
     // 💡 2. 矛盾チェック（posもnegも0のビットがあれば、ANDをとると消滅する）
-    if ((p | n_b) != ~0ULL) {
+    if ((p | n_b) != ~0ULL)
+    {
       curr_F = curr_F->next;
       continue; // 矛盾した項は飛ばす（リストに入れない）
     }
 
     // 💡 3. 矛盾しなければ、ANDがとれた新しいCubeをallocしてリストに追加
     Cube *new_cube = alloc_cube();
-    if (new_cube != NULL) {
+    if (new_cube != NULL)
+    {
       new_cube->pos_bits = p;
       new_cube->neg_bits = n_b;
       new_cube->next = NULL;
 
-      if (res_head == NULL) {
+      if (res_head == NULL)
+      {
         res_head = new_cube;
         res_tail = new_cube;
-      } else {
+      }
+      else
+      {
         res_tail->next = new_cube;
         res_tail = new_cube;
       }
@@ -83,21 +94,48 @@ Cube *intersect_list_and_cube(const Cube *F, const Cube *c) {
   return res_head;
 }
 
+/*リストとリストのANDをとる関数*/
+Cube *intersect_list_and_list(const Cube *F, const Cube *G)
+{
+  if (F == NULL || G == NULL)
+    return NULL;
+
+  Cube *res_head = NULL;
+  Cube *res_tail = NULL;
+  const Cube *curr_G = G;
+
+  while (curr_G != NULL)
+  {
+    // リストF と キューブ curr_G のANDリストを作る
+    Cube *sub_list = intersect_list_and_cube(F, curr_G);
+
+    // 作成されたリストを結果リストに追加
+    append_to_list(&res_head, &res_tail, sub_list);
+
+    curr_G = curr_G->next;
+  }
+
+  return res_head;
+}
 // activeなbit探し
-int find_best_pivot_bit(const Cube *G, int n) {
+int find_best_pivot_bit(const Cube *G, int n)
+{
   if (G == NULL)
     return -1;
 
   int best_bit = -1;
   int min_difference = 999999;
+  int best_total = -1;
 
-  for (int i = 0; i < n; i++) {
+  for (int i = 0; i < n; i++)
+  {
     uint64_t mask = (1ULL << (n - 1 - i));
     int count_0 = 0;
     int count_1 = 0;
 
     const Cube *curr = G;
-    while (curr != NULL) {
+    while (curr != NULL)
+    {
       bool has_pos = (curr->pos_bits & mask) != 0;
       bool has_neg = (curr->neg_bits & mask) != 0;
 
@@ -112,18 +150,22 @@ int find_best_pivot_bit(const Cube *G, int n) {
     if (count_0 == 0 && count_1 == 0)
       continue;
 
-    int diff = (count_0 > count_1) ? (count_0 - count_1) : (count_1 - count_0);
+    int diff = abs(count_1 - count_0);
+    int total = count_0 + count_1;
 
-    if (diff < min_difference) {
+    if (diff < min_difference || (diff == min_difference && total > best_total))
+    {
       min_difference = diff;
       best_bit = i;
+      best_total = total;
     }
   }
   return best_bit;
 }
 
 // activeな列を1としたcubeを作成
-Cube *create_active_on_bit(int n, int pivot) {
+Cube *create_active_on_bit(int n, int pivot)
+{
   Cube *c1 = alloc_cube();
   uint64_t mask = (1ULL << (n - 1 - pivot));
   c1->pos_bits = ~0ULL;
@@ -133,7 +175,8 @@ Cube *create_active_on_bit(int n, int pivot) {
 }
 
 // activeな列を0としたcubeを作成
-Cube *create_active_off_bit(int n, int pivot) {
+Cube *create_active_off_bit(int n, int pivot)
+{
 
   uint64_t mask = (1ULL << (n - 1 - pivot));
   Cube *c2 = alloc_cube();
@@ -144,9 +187,11 @@ Cube *create_active_off_bit(int n, int pivot) {
   return c2;
 }
 
-Cube *complement(Cube *G, int n) {
+Cube *complement(Cube *G, int n)
+{
   int pivot = find_best_pivot_bit(G, n);
-  if (pivot == -1) {
+  if (pivot == -1)
+  {
     return invert_single_cube(G, n);
   }
   Cube *c1 = create_active_on_bit(n, pivot);
@@ -159,14 +204,20 @@ Cube *complement(Cube *G, int n) {
   Cube *not_G1 = NULL;
   Cube *not_G2 = NULL;
   // ここから再帰するぶぶんスタート
-  if (n1 == 1) {
+  if (n1 == 1)
+  {
     not_G1 = invert_single_cube(G1, n);
-  } else {
+  }
+  else
+  {
     not_G1 = complement(G1, n);
   }
-  if (n2 == 1) {
+  if (n2 == 1)
+  {
     not_G2 = invert_single_cube(G2, n);
-  } else {
+  }
+  else
+  {
     not_G2 = complement(G2, n);
   }
 
@@ -185,14 +236,17 @@ Cube *complement(Cube *G, int n) {
 
 // 制限で求めたFの否定を求める
 //  ダブり（重複）なしで1つのキューブの否定を求める関数
-Cube *invert_single_cube(const Cube *c, int n) {
+Cube *invert_single_cube(const Cube *c, int n)
+{
   Cube *res_head = NULL;
   Cube *res_tail = NULL;
 
-  if (c == NULL) {
+  if (c == NULL)
+  {
     return NULL;
   }
-  if ((c->pos_bits & c->neg_bits) == ~0ULL) {
+  if ((c->pos_bits & c->neg_bits) == ~0ULL)
+  {
     return NULL;
   }
 
@@ -201,26 +255,31 @@ Cube *invert_single_cube(const Cube *c, int n) {
   uint64_t accum_pos = ~0ULL;
   uint64_t accum_neg = ~0ULL;
 
-  for (int i = 0; i < n; i++) {
+  for (int i = 0; i < n; i++)
+  {
     uint64_t mask = (1ULL << (n - 1 - i));
     bool has_pos = (c->pos_bits & mask) != 0;
     bool has_neg = (c->neg_bits & mask) != 0;
 
     Cube *inverted = NULL;
 
-    if (has_pos && !has_neg) { // 元の文字が「1」のとき
+    if (has_pos && !has_neg)
+    { // 元の文字が「1」のとき
       inverted = alloc_cube();
-      if (inverted) {
+      if (inverted)
+      {
         // 基本はこれまでの履歴（accum）を引き継ぐ
         inverted->pos_bits = accum_pos & ~mask; // 今回の桁だけ「0」にする
         inverted->neg_bits = accum_neg;
       }
       // 💡【次の文字への引き継ぎ】今回の桁が「1」だったという事実を履歴に残す
       accum_neg &= ~mask; // negのマスクを外すことで「1」に固定
-
-    } else if (!has_pos && has_neg) { // 元の文字が「0」のとき
+    }
+    else if (!has_pos && has_neg)
+    { // 元の文字が「0」のとき
       inverted = alloc_cube();
-      if (inverted) {
+      if (inverted)
+      {
         // 基本はこれまでの履歴（accum）を引き継ぐ
         inverted->pos_bits = accum_pos;
         inverted->neg_bits = accum_neg & ~mask; // 今回の桁だけ「1」にする
@@ -230,11 +289,15 @@ Cube *invert_single_cube(const Cube *c, int n) {
     }
 
     // 生成されたキューブをリストに繋ぐ
-    if (inverted) {
-      if (!res_head) {
+    if (inverted)
+    {
+      if (!res_head)
+      {
         res_head = inverted;
         res_tail = inverted;
-      } else {
+      }
+      else
+      {
         res_tail->next = inverted;
         res_tail = inverted;
       }

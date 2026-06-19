@@ -1,16 +1,18 @@
 #include "cube_restrict.h" // 自身のヘッダー
-#include "cube_pool.h" // alloc_cube や free_cube_list を使うために必要
+#include "cube_pool.h"     // alloc_cube や free_cube_list を使うために必要
 #include "pla_io.h"
 #include <stddef.h>
 #include <stdio.h>
 
 // cube_listを複製
-Cube *duplicate_list(const Cube *head) {
+Cube *duplicate_list(const Cube *head)
+{
   Cube *new_head = NULL;
   Cube *new_tail = NULL;
   const Cube *curr = head;
 
-  while (curr != NULL) {
+  while (curr != NULL)
+  {
     Cube *copy = alloc_cube();
     if (!copy)
       return NULL;
@@ -18,10 +20,13 @@ Cube *duplicate_list(const Cube *head) {
     copy->neg_bits = curr->neg_bits;
     copy->next = NULL;
 
-    if (new_head == NULL) {
+    if (new_head == NULL)
+    {
       new_head = copy;
       new_tail = copy;
-    } else {
+    }
+    else
+    {
       new_tail->next = copy;
       new_tail = copy;
     }
@@ -30,7 +35,8 @@ Cube *duplicate_list(const Cube *head) {
   return new_head;
 }
 
-Cube *create_union_F_or_R(const Cube *list_10, const Cube *list_01) {
+Cube *create_union_F_or_R(const Cube *list_10, const Cube *list_01)
+{
   Cube *head_10 = duplicate_list(list_10);
   Cube *head_01 = duplicate_list(list_01);
 
@@ -40,7 +46,8 @@ Cube *create_union_F_or_R(const Cube *list_10, const Cube *list_01) {
     return head_10;
 
   Cube *tail = head_10;
-  while (tail->next != NULL) {
+  while (tail->next != NULL)
+  {
     tail = tail->next;
   }
   tail->next = head_01;
@@ -51,9 +58,11 @@ Cube *create_union_F_or_R(const Cube *list_10, const Cube *list_01) {
 /*
  * すべての変数が '-' (Don't Care) となる Universe Cube を生成して返す関数
  */
-Cube *create_universe_cube(void) {
+Cube *create_universe_cube(void)
+{
   Cube *uni = alloc_cube();
-  if (!uni) {
+  if (!uni)
+  {
     fprintf(stderr, "Error: Failed to allocate memory for Universe Cube.\n");
     return NULL;
   }
@@ -65,22 +74,24 @@ Cube *create_universe_cube(void) {
   return uni;
 }
 
-Cube *compute_restriction_optimized(const Cube *F, const Cube *c) {
+Cube *compute_restriction_optimized(const Cube *F, const Cube *c)
+{
 
   Cube *G_head = NULL;
   Cube *G_tail = NULL;
   const Cube *curr_F = F;
-  int n = 5;
 
   uint64_t not_uni_pos = ~(c->pos_bits);
   uint64_t not_uni_neg = ~(c->neg_bits);
 
-  while (curr_F != NULL) {
+  while (curr_F != NULL)
+  {
 
     uint64_t p = curr_F->pos_bits & c->pos_bits;
     uint64_t n_b = curr_F->neg_bits & c->neg_bits;
 
-    if ((p | n_b) != ~0ULL) {
+    if ((p | n_b) != ~0ULL)
+    {
       curr_F = curr_F->next;
       continue;
     }
@@ -89,15 +100,19 @@ Cube *compute_restriction_optimized(const Cube *F, const Cube *c) {
     n_b |= not_uni_neg;
 
     Cube *res_cube = alloc_cube();
-    if (res_cube != NULL) {
+    if (res_cube != NULL)
+    {
       res_cube->pos_bits = p;
       res_cube->neg_bits = n_b;
       res_cube->next = NULL;
 
-      if (G_head == NULL) {
+      if (G_head == NULL)
+      {
         G_head = res_cube;
         G_tail = res_cube;
-      } else {
+      }
+      else
+      {
         G_tail->next = res_cube;
         G_tail = res_cube;
       }
