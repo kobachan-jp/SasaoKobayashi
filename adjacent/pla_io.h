@@ -3,6 +3,7 @@
 
 #include "cube_pool.h"
 #include <stdbool.h>
+#include <stdio.h>
 
 Cube *parse_cube_string(const char *cube_str, int n);
 void append_to_list(Cube **head, Cube **tail, Cube *new_cube);
