@@ -52,30 +52,26 @@ int main(int argc, char *argv[])
     // save_cube_list("F_or_R_pos.txt",&F_or_R,input_num,true);
     // save_cube_list("F_or_R_neg.txt",&F_or_R,input_num,false);
     Cube *G = compute_restriction_optimized(F_or_R, uni);
-    fprintf(stderr, "restrict End\n");
-    fprintf_cube_list_combined("G.txt", G, input_num, "");
-    // save_cube_list("G_pos.txt",&G,input_num,true);
-    // save_cube_list("G_neg.txt",&G,input_num,false);
+    // fprintf(stderr, "restrict End\n");
+    //  fprintf_cube_list_combined("G.txt", G, input_num, "");
+    //   save_cube_list("G_pos.txt",&G,input_num,true);
+    //   save_cube_list("G_neg.txt",&G,input_num,false);
 
     // Gの否定を求める(9.4.2)
     Cube *not_G = complement(G, input_num);
-    fprintf_cube_list_combined("not_G.txt", not_G, input_num, "10");
-    // save_cube_list("G_comp_pos.txt",&not_G,input_num,true);
+    // fprintf_cube_list_combined("not_G.txt", not_G, input_num, "10");
+    //  save_cube_list("G_comp_pos.txt",&not_G,input_num,true);
     Cube *complement = intersect_list_and_list(G, not_G);
-    fprintf_cube_list_combined("complement.txt", complement, input_num, "");
-    // c&not_Gをとる(9.4.3)
+    // fprintf_cube_list_combined("complement.txt", complement, input_num, "");
+    //  c&not_Gをとる(9.4.3)
     Cube *disjoint = intersect_list_and_cube(not_G, uni);
     // save_cube_list("disjoint_pos.txt",&disjoint,input_num,true);
     // save_cube_list("disjoint_neg.txt",&disjoint,input_num,false);
-    fprintf_cube_list_combined("disjoint.txt", disjoint, input_num, "11");
+    // fprintf_cube_list_combined("disjoint.txt", disjoint, input_num, "11");
 
     // 距離1のリストを求める
     Cube *distance = make_distance1_CubeList(output_10_list, disjoint);
     fprintf_cube_list_combined("distance.txt", distance, input_num, "11");
-
-    // adjacentする
-    Cube *adjacent = append_lists_destructive(output_10_list, distance);
-    fprintf_cube_list_combined("adjacent.txt", adjacent, input_num, "10");
 
     // 3. 後片付け
 
@@ -83,8 +79,7 @@ int main(int argc, char *argv[])
     free_cube_list(G);
     free_cube_list(not_G);
     free_cube_list(disjoint);
-    free_cube_list(adjacent);
-    printf("completed\n");
+    // printf("completed\n");
     return 0;
 }
 /*
