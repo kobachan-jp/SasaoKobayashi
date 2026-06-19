@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 
     // 距離1のリストを求める
     Cube *distance = make_distance1_CubeList(output_10_list, disjoint);
-    fprintf_cube_list_combined("distance.txt", distance, input_num, "10");
+    fprintf_cube_list_combined("distance.txt", distance, input_num, "11");
 
     // adjacentする
     Cube *adjacent = append_lists_destructive(output_10_list, distance);
