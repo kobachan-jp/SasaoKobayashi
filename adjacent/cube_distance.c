@@ -1,5 +1,6 @@
 #include "cube_distance.h" // 自身のヘッダー
 #include "cube_pool.h"     // alloc_cube や free_cube_list を使うために必要
+#include "pla_io.h"
 #include <stddef.h>
 #include <stdio.h>
 
