@@ -97,11 +97,12 @@ int main(int argc, char *argv[])
     Cube *esp_10_list = NULL;
     make_cube_list("esp_10.txt", &esp_10_list, &input_num);
 
-    Cube *distance = make_distance1_CubeList(esp_10_list, disjoint);
-    fprintf_cube_list_combined("distance.txt", distance, input_num, "11");
+    Cube *adjacent = make_distance1_CubeList(esp_10_list, disjoint);
+    fprintf_cube_list_combined("adjacent.txt", adjacent, input_num, "10");
 
-        free_cube_list(disjoint);
+    free_cube_list(disjoint);
     free_cube_list(esp_10_list);
+    free_cube_list(adjacent);
     printf("completed\n");
     return 0;
 }
