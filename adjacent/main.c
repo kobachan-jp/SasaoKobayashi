@@ -14,12 +14,10 @@ int main(int argc, char *argv[])
     Cube *output_10_list = NULL;
     Cube *output_01_list = NULL;
     const char *filename = argv[1];
-    const char *esp_file = argv[2];
     int input_num = 0;
 
     // 2. ファイル読み込み
     // 入力ファイルを確認
-
     const char *clean_fp = trim_newline(filename);
     if (clean_fp == NULL)
     {
@@ -67,41 +65,19 @@ int main(int argc, char *argv[])
     // fprintf_cube_list_combined("complement.txt", complement, input_num, "");
     //  c&not_Gをとる(9.4.3)
     Cube *disjoint = intersect_list_and_cube(not_G, uni);
+    fprintf_cube_list_combined("disjoint.txt", disjoint, input_num, "11");
+
+    // 距離1のリストを求める
+    Cube *adjacent = make_distance1_CubeList(output_10_list, disjoint);
+    fprintf_cube_list_combined("adjacent.txt", adjacent, input_num, "10");
+
+    // 3. 後片付け
 
     free_cube(uni);
     free_cube_list(G);
     free_cube_list(not_G);
     free_cube_list(output_10_list);
-
-    // 距離1のリストを求める
-
-    // 1. ファイル読み込み
-    // 入力ファイルを確認
-
-    const char *clean_esp = trim_newline(esp_file);
-    if (clean_esp == NULL)
-    {
-        fprintf(stderr, "Cannot complete trim_newline esp_file\n");
-        return 0;
-    }
-    //.iとかいらないやつを飛ばして保存.
-    const char *skip_esp = skip_directives(clean_esp);
-    if (skip_esp == NULL)
-    {
-        fprintf(stderr, "Cannot complete skip_directives esp_file.\n");
-        return 0;
-    }
-    // 10の入力部のみ保存.
-    extract_input(skip_esp, "10", "esp_10.txt");
-    // 10のリストをbitに変換(肯定と否定それぞれ分けて保存).
-    Cube *esp_10_list = NULL;
-    make_cube_list("esp_10.txt", &esp_10_list, &input_num);
-
-    Cube *adjacent = make_distance1_CubeList(esp_10_list, disjoint);
-    fprintf_cube_list_combined("adjacent.txt", adjacent, input_num, "10");
-
     free_cube_list(disjoint);
-    free_cube_list(esp_10_list);
     free_cube_list(adjacent);
     printf("completed\n");
     return 0;
