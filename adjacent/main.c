@@ -32,9 +32,9 @@ int main(int argc, char *argv[])
         return 0;
     }
     // 10の入力部のみ保存.
-    extract_input(skip_fp, "10", "output_10.txt");
+    extract_input(skip_fp, "1", "output_10.txt");
     // 01の入力部のみ保存.
-    extract_input(skip_fp, "01", "output_01.txt");
+    extract_input(skip_fp, "0", "output_01.txt");
     // 10と01のリストをbitに変換(肯定と否定それぞれ分けて保存).
     make_cube_list("output_10.txt", &output_10_list, &input_num);
     make_cube_list("output_01.txt", &output_01_list, &input_num);
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 
     // 距離1のリストを求める
     Cube *adjacent = make_distance1_CubeList(output_10_list, disjoint);
-    fprintf_cube_list_combined("adjacent.txt", adjacent, input_num, "10");
+    fprintf_cube_list_combined("adjacent.txt", adjacent, input_num, "1");
 
     // 3. 後片付け
 
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     free_cube_list(output_10_list);
     free_cube_list(disjoint);
     free_cube_list(adjacent);
-    printf("completed\n");
+    // printf("completed\n");
     return 0;
 }
 /*

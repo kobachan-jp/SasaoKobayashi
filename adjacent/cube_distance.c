@@ -11,10 +11,18 @@ int check_distance(Cube *a, Cube *b)
   {
     return -1;
   }
-  uint64_t pos = a->pos_bits & b->pos_bits;
-  uint64_t neg = a->neg_bits & b->neg_bits;
+  // 1.DC部分を求める(maskを作る)
+  uint64_t a_dc = a->pos_bits & a->neg_bits;
+  uint64_t b_dc = b->pos_bits & b->neg_bits;
+  uint64_t mask = ~(a_dc | b_dc);
 
-  int distance = __builtin_popcountll(~(pos | neg));
+  // 2.距離1とDCの部分を求める
+  uint64_t pos = a->pos_bits ^ b->pos_bits;
+  uint64_t neg = a->neg_bits ^ b->neg_bits;
+  uint64_t dis = (pos | neg);
+
+  // 3.DCの部分をマスクして距離を求める
+  int distance = __builtin_popcountll((dis & mask));
   return distance;
 }
 /*Cubeリスト同士でGの中でＦのcubeとの距離が1のCubeのリストを作成*/
@@ -28,13 +36,11 @@ Cube *make_distance1_CubeList(Cube *F, Cube *G)
 
   Cube *head = NULL;
   Cube *tail = NULL;
-
   for (Cube *b = G; b != NULL; b = b->next)
   {
     for (Cube *a = F; a != NULL; a = a->next)
     {
       int count = check_distance(a, b);
-
       if (count == -1)
       {
         return NULL;
@@ -65,6 +71,19 @@ Cube *make_distance1_CubeList(Cube *F, Cube *G)
           tail = new_cube;
         }
       }
+      /*
+      if (n < 20)
+      {
+        fprintf(stdout, "------------\n");
+        fprintf(stdout, "ONset : ");
+        fprintf_cube_combined(stdout, a, 64, "");
+
+        fprintf(stdout, "DC    : ");
+        fprintf_cube_combined(stdout, b, 64, "");
+        fprintf(stdout, "------------\n");
+      }
+      n++;
+      */
       break;
     }
   }
