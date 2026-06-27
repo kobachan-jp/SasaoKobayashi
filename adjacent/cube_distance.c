@@ -1,53 +1,90 @@
 #include "cube_distance.h" // 自身のヘッダー
-#include "cube_pool.h" // alloc_cube や free_cube_list を使うために必要
+#include "cube_pool.h"     // alloc_cube や free_cube_list を使うために必要
+#include "pla_io.h"
 #include <stddef.h>
 #include <stdio.h>
 
 /*Cube同士の距離を測る*/
-int check_distance(Cube *a, Cube *b) {
-  if (a == NULL || b == NULL) {
+int check_distance(Cube *a, Cube *b)
+{
+  if (a == NULL || b == NULL)
+  {
     return -1;
   }
-  uint64_t pos = a->pos_bits & b->pos_bits;
-  uint64_t neg = a->neg_bits & b->neg_bits;
+  // 1.DC部分を求める(maskを作る)
+  uint64_t a_dc = a->pos_bits & a->neg_bits;
+  uint64_t b_dc = b->pos_bits & b->neg_bits;
+  uint64_t mask = ~(a_dc | b_dc);
 
-  int distance = __builtin_popcountll(~(pos | neg));
+  // 2.距離1とDCの部分を求める
+  uint64_t pos = a->pos_bits ^ b->pos_bits;
+  uint64_t neg = a->neg_bits ^ b->neg_bits;
+  uint64_t dis = (pos | neg);
+
+  // 3.DCの部分をマスクして距離を求める
+  int distance = __builtin_popcountll((dis & mask));
   return distance;
 }
 /*Cubeリスト同士でGの中でＦのcubeとの距離が1のCubeのリストを作成*/
-Cube *make_distance1_CubeList(Cube *F, Cube *G) {
-  if (F == NULL || G == NULL) {
-    fprintf(stderr, "Cannot make distance1 CubeList./n");
+Cube *make_distance1_CubeList(Cube *F, Cube *G)
+{
+  if (F == NULL || G == NULL)
+  {
+    fprintf(stderr, "Cannot make distance1 CubeList.\n");
     return NULL;
   }
 
   Cube *head = NULL;
   Cube *tail = NULL;
-
-  for (Cube *b = G; b != NULL; b = b->next) {
-    for (Cube *a = F; a != NULL; a = a->next) {
+  int n = 0;
+  for (Cube *b = G; b != NULL; b = b->next)
+  {
+    for (Cube *a = F; a != NULL; a = a->next)
+    {
       int count = check_distance(a, b);
 
-      if (count == -1) {
+      if (count == -1)
+      {
         return NULL;
       }
-      if (count != 1) {
+      if (count != 1)
+      {
         continue;
       }
+      if (count == 0)
+      {
+        fprintf(stdout, "------------\n");
+        fprintf(stdout, "ONset : ");
+        fprintf_cube_combined(stdout, a, 64, "");
+
+        fprintf(stdout, "DC    : ");
+        fprintf_cube_combined(stdout, b, 64, "");
+        fprintf(stdout, "count = %d\n", count);
+        fprintf(stdout, "------------\n");
+      }
       Cube *new_cube = alloc_cube();
-      if (new_cube != NULL) {
+      if (new_cube == NULL)
+      {
+        return NULL;
+      }
+      if (new_cube != NULL)
+      {
         new_cube->pos_bits = b->pos_bits;
         new_cube->neg_bits = b->neg_bits;
         new_cube->next = NULL;
 
-        if (head == NULL) {
+        if (head == NULL)
+        {
           head = new_cube;
           tail = new_cube;
-        } else {
+        }
+        else
+        {
           tail->next = new_cube;
           tail = new_cube;
         }
       }
+
       break;
     }
   }
