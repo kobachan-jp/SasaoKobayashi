@@ -36,11 +36,13 @@ Cube *make_distance1_CubeList(Cube *F, Cube *G)
 
   Cube *head = NULL;
   Cube *tail = NULL;
+  int n = 0;
   for (Cube *b = G; b != NULL; b = b->next)
   {
     for (Cube *a = F; a != NULL; a = a->next)
     {
       int count = check_distance(a, b);
+
       if (count == -1)
       {
         return NULL;
@@ -48,6 +50,17 @@ Cube *make_distance1_CubeList(Cube *F, Cube *G)
       if (count != 1)
       {
         continue;
+      }
+      if (count == 0)
+      {
+        fprintf(stdout, "------------\n");
+        fprintf(stdout, "ONset : ");
+        fprintf_cube_combined(stdout, a, 64, "");
+
+        fprintf(stdout, "DC    : ");
+        fprintf_cube_combined(stdout, b, 64, "");
+        fprintf(stdout, "count = %d\n", count);
+        fprintf(stdout, "------------\n");
       }
       Cube *new_cube = alloc_cube();
       if (new_cube == NULL)
@@ -71,19 +84,7 @@ Cube *make_distance1_CubeList(Cube *F, Cube *G)
           tail = new_cube;
         }
       }
-      /*
-      if (n < 20)
-      {
-        fprintf(stdout, "------------\n");
-        fprintf(stdout, "ONset : ");
-        fprintf_cube_combined(stdout, a, 64, "");
 
-        fprintf(stdout, "DC    : ");
-        fprintf_cube_combined(stdout, b, 64, "");
-        fprintf(stdout, "------------\n");
-      }
-      n++;
-      */
       break;
     }
   }
